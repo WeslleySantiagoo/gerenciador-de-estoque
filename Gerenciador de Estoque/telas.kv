@@ -1,0 +1,63 @@
+JanelaGerenciadora:
+    LoginScreen:
+    EstoqueScreen:
+
+<LoginScreen>
+    name: "Tela de Login"
+
+    MDFloatLayout:
+        md_bg_color: (211 / 255, 240/255, 219/255)
+        size_hint: None, None
+        size: ("360dp", "640dp")
+        
+        Image:
+            source: 'Imagens/homem.png'
+            allow_stretch: False
+            size_hint: None, None
+            size: ('150dp', '150dp')
+            pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+
+        MDTextField:
+            pos_hint: {"center_x": 0.5, "center_y": 0.43}
+            size_hint: None, None
+            size: ("250dp", "40dp")
+            md_bg_color: (0.180392, 0.545098, 0.341176)
+            theme_text_color: 'Custom'
+            text_color: (0, 0, 0, 1)
+
+        MDTextField:
+            pos_hint: {"center_x": 0.5, "center_y": 0.33}
+            size_hint: None, None
+            size: ("250dp", "40dp")
+            md_bg_color: (0.180392, 0.545098, 0.341176)
+            theme_text_color: 'Custom'
+            text_color: (0, 0, 0, 1)
+
+        MDFillRoundFlatButton:
+            text: '     Entrar     '
+            font_name: 'Fonts/Poppins-Medium.ttf'
+            theme_text_color: 'Custom'
+            text_color: (1, 1, 1, 1)
+            md_bg_color: (0.180392, 0.545098, 0.341176)
+            pos_hint: {'center_x': 0.5, "center_y": 0.23}
+            on_release:
+                app.root.current = "Estoque"
+
+        MDFillRoundFlatButton:
+            text: '  Cadastro  '
+            font_name: 'Fonts/Poppins-Medium.ttf'
+            theme_text_color: 'Custom'
+            text_color: (1, 1, 1, 1)
+            md_bg_color: (0.180392, 0.545098, 0.341176)
+            pos_hint: {'center_x': 0.5, "center_y": 0.15}
+            
+<EstoqueScreen>
+    name: "Estoque"
+    MDTopAppBar: 
+        title: 'Estoque'
+        font_name: 'Fonts/Poppins-Bold.ttf'
+        anchor_title: 'left'
+        left_action_items: [['arrow-left', app.ir_tela_de_login]]
+        pos_hint: {'center_x': 0.5,'center_y': 0.95}
+        md_bg_color: (174/255, 209/255, 200/255)
+        
