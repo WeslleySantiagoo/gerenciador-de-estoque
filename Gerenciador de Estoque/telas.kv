@@ -1,63 +1,81 @@
-JanelaGerenciadora:
+ScreenManager:
     LoginScreen:
     EstoqueScreen:
 
 <LoginScreen>
     name: "Tela de Login"
-
-    MDFloatLayout:
-        md_bg_color: (211 / 255, 240/255, 219/255)
-        size_hint: None, None
-        size: ("360dp", "640dp")
-        
-        Image:
-            source: 'Imagens/homem.png'
-            allow_stretch: False
-            size_hint: None, None
-            size: ('150dp', '150dp')
-            pos_hint: {'center_x': 0.5, 'center_y': 0.7}
-
-        MDTextField:
-            pos_hint: {"center_x": 0.5, "center_y": 0.43}
-            size_hint: None, None
-            size: ("250dp", "40dp")
-            md_bg_color: (0.180392, 0.545098, 0.341176)
-            theme_text_color: 'Custom'
-            text_color: (0, 0, 0, 1)
-
-        MDTextField:
-            pos_hint: {"center_x": 0.5, "center_y": 0.33}
-            size_hint: None, None
-            size: ("250dp", "40dp")
-            md_bg_color: (0.180392, 0.545098, 0.341176)
-            theme_text_color: 'Custom'
-            text_color: (0, 0, 0, 1)
-
-        MDFillRoundFlatButton:
-            text: '     Entrar     '
-            font_name: 'Fonts/Poppins-Medium.ttf'
-            theme_text_color: 'Custom'
-            text_color: (1, 1, 1, 1)
-            md_bg_color: (0.180392, 0.545098, 0.341176)
-            pos_hint: {'center_x': 0.5, "center_y": 0.23}
-            on_release:
-                app.root.current = "Estoque"
-
-        MDFillRoundFlatButton:
-            text: '  Cadastro  '
-            font_name: 'Fonts/Poppins-Medium.ttf'
-            theme_text_color: 'Custom'
-            text_color: (1, 1, 1, 1)
-            md_bg_color: (0.180392, 0.545098, 0.341176)
-            pos_hint: {'center_x': 0.5, "center_y": 0.15}
+    MDScreen:
+        MDFloatLayout:
+            orientation: 'vertical'
+            md_bg_color: (221/255, 240/255, 219/255, 1)
+            FitImage:
+                source:'Images/homem.png'
+                size_hint: None, None
+                size: ('150dp','150dp')
+                pos_hint: {'center_x': 0.5,'center_y': 0.7}
             
-<EstoqueScreen>
-    name: "Estoque"
-    MDTopAppBar: 
-        title: 'Estoque'
-        font_name: 'Fonts/Poppins-Bold.ttf'
-        anchor_title: 'left'
-        left_action_items: [['arrow-left', app.ir_tela_de_login]]
-        pos_hint: {'center_x': 0.5,'center_y': 0.95}
-        md_bg_color: (174/255, 209/255, 200/255)
-        
+            MDTextField:
+                id: 'email_field'
+                mode: 'outlined'
+                pos_hint: {"center_x": 0.5, "center_y": 0.50}
+                size_hint: 0.7, None
+                theme_line_color: "Custom"
+                line_color_normal: (209/255, 209/255, 209/255, 1)
+                on_text: app.verify_dominion_email(self)
+                
+                MDTextFieldHelperText:
+                    text: 'O domínio deve ser @ufrpe.br'
+                
+                MDTextFieldHintText:
+                    text: "Email"
+
+
+            MDTextField:
+                id: 'password_field_'
+                mode: 'outlined'
+                pos_hint: {"center_x": 0.5, "center_y": 0.38}
+                text_size: '10dp'
+                password: True
+                size_hint: None, None
+                size: '250dp','40dp'
+                theme_line_color: "Custom"
+                line_color_normal: (209/255, 209/255, 209/255, 1)
+                on_text: app.verify_password(self)
+                erro: app.invalid_password(self.text) != True
+                MDTextFieldHelperText:
+                    text: "A senha deve ter 6 caracteres"
+                MDTextFieldHintText:
+                    text: "Senha"
+
+            MDButton:
+                id: 'entrar_button'
+                style: "filled"
+                theme_width: "Custom"
+                height: "40dp"
+                size_hint_x: .38
+                pos_hint: {'center_x': 0.5,'center_y': 0.25}
+                theme_bg_color: 'Custom'
+                md_bg_color: (46/255, 139/255, 87/255, 1)
+                MDButtonText:
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Bold.ttf'
+                    text_color: (1,1,1,1)
+                    text: "Entrar"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+            
+            MDButton:
+                id: 'registrar_button'
+                style: "filled"
+                theme_width: "Custom"
+                height: "40dp"
+                size_hint_x: .38
+                pos_hint: {'center_x': 0.5,'center_y': 0.17}
+                theme_bg_color: 'Custom'
+                md_bg_color: (46/255, 139/255, 87/255, 1)
+                MDButtonText:
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Bold.ttf'
+                    text_color: (1,1,1,1)
+                    text: "Registrar"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+

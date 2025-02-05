@@ -2,12 +2,8 @@ from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivymd.uix.screenmanager import ScreenManager
-from kivymd.uix.screen import Screen
-from kivymd.uix.button import MDFillRoundFlatButton
-from kivymd.uix.textfield import *
-from kivymd.uix.toolbar import MDTopAppBar
-from kivy.utils import get_color_from_hex
-
+from kivy.uix.filechooser import Screen
+from functions import *
 
 class JanelaGerenciadora(ScreenManager):
     pass
@@ -20,13 +16,23 @@ class EstoqueScreen(Screen):
 
 class MainApp(MDApp):
     def build(self):
+        Window.size = (360, 640)
         self.title = "Genciador de Estoque"
-        custom_color_green = get_color_from_hex("#2E8B57")
         self.theme_cls.primary_palette = "Green"
         self.theme_cls.theme_style = "Light"
         return Builder.load_file('telas.kv')
-    
-    def ir_tela_de_login(self):
-        self.root.current = "Tela de Login"
+            
+    def verify_dominion_email(self, email_field):
+            if email_field.text != "":
+                email_field.error = not email_field.text.endswith('@ufrpe.br')
+
+    def invalid_password(self, password: str) -> str:
+        if len(password) < 6:
+            return True
+        return False
+            
+    def verify_password(self, password_field):
+        password_field.error = self.invalid_password(password_field.text) != False
+        
 
 MainApp().run()
