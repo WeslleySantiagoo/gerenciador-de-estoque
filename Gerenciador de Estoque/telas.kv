@@ -8,30 +8,32 @@ ScreenManager:
         MDFloatLayout:
             orientation: 'vertical'
             md_bg_color: (221/255, 240/255, 219/255, 1)
-            FitImage:
+
+            FitImage:   #Imagem
                 source:'Images/homem.png'
                 size_hint: None, None
                 size: ('150dp','150dp')
                 pos_hint: {'center_x': 0.5,'center_y': 0.7}
             
-            MDTextField:
-                id: 'email_field'
+
+            MDTextField:    #Input Email
+                id: email_input
                 mode: 'outlined'
                 pos_hint: {"center_x": 0.5, "center_y": 0.50}
                 size_hint: 0.7, None
                 theme_line_color: "Custom"
                 line_color_normal: (209/255, 209/255, 209/255, 1)
-                on_text: app.verify_dominion_email(self)
-                
+                on_text: root.verify_dominion_email(self)
+
                 MDTextFieldHelperText:
                     text: 'O domínio deve ser @ufrpe.br'
-                
+
                 MDTextFieldHintText:
                     text: "Email"
 
 
-            MDTextField:
-                id: 'password_field_'
+            MDTextField:    #Input Senha
+                id: password_input
                 mode: 'outlined'
                 pos_hint: {"center_x": 0.5, "center_y": 0.38}
                 text_size: '10dp'
@@ -40,14 +42,17 @@ ScreenManager:
                 size: '250dp','40dp'
                 theme_line_color: "Custom"
                 line_color_normal: (209/255, 209/255, 209/255, 1)
-                on_text: app.verify_password(self)
-                erro: app.invalid_password(self.text) != True
+                on_text: root.verify_password(self)
+                erro: root.invalid_password(self.text) != True
+
                 MDTextFieldHelperText:
                     text: "A senha deve ter 6 caracteres"
+
                 MDTextFieldHintText:
                     text: "Senha"
 
-            MDButton:
+
+            MDButton:   #Entrar Button
                 id: 'entrar_button'
                 style: "filled"
                 theme_width: "Custom"
@@ -56,14 +61,18 @@ ScreenManager:
                 pos_hint: {'center_x': 0.5,'center_y': 0.25}
                 theme_bg_color: 'Custom'
                 md_bg_color: (46/255, 139/255, 87/255, 1)
+                on_release: root.sign_in_button(email_input.text, password_input.text)
+                #on_press: app.sign_in_button(email_input.text, password_input.text)
+
                 MDButtonText:
                     theme_font_name: 'Custom'
                     font_name: 'Fonts/Poppins-Bold.ttf'
                     text_color: (1,1,1,1)
                     text: "Entrar"
                     pos_hint: {"center_x": .5, "center_y": .5}
+                    
             
-            MDButton:
+            MDButton:   #Registrar Button
                 id: 'registrar_button'
                 style: "filled"
                 theme_width: "Custom"
@@ -72,10 +81,35 @@ ScreenManager:
                 pos_hint: {'center_x': 0.5,'center_y': 0.17}
                 theme_bg_color: 'Custom'
                 md_bg_color: (46/255, 139/255, 87/255, 1)
+                on_release: root.sign_up_button(email_input.text, password_input.text)
+
                 MDButtonText:
                     theme_font_name: 'Custom'
                     font_name: 'Fonts/Poppins-Bold.ttf'
                     text_color: (1,1,1,1)
                     text: "Registrar"
                     pos_hint: {"center_x": .5, "center_y": .5}
+                
+            
+
+                    
+
+<EstoqueScreen>
+    name: 'Tela de Estoque'
+    MDScreen:
+        md_bg_color: (1,0,0,1)
+
+
+        MDLabel:
+            orientation: 'horizontal'
+            text: "11111"
+            halign: "center"
+            md_bg_color: (1,1,1,1)
+
+        MDTopAppBar:
+
+            MDTopAppBarTitle:
+                text: "Estoque"
+                
+            
 
