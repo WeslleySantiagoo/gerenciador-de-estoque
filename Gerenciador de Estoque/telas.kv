@@ -9,14 +9,14 @@ ScreenManager:
             orientation: 'vertical'
             md_bg_color: (221/255, 240/255, 219/255, 1)
 
-            FitImage:   #Imagem
+            FitImage:
                 source:'Images/homem.png'
                 size_hint: None, None
                 size: ('150dp','150dp')
                 pos_hint: {'center_x': 0.5,'center_y': 0.7}
             
 
-            MDTextField:    #Input Email
+            MDTextField:
                 id: email_input
                 mode: 'outlined'
                 pos_hint: {"center_x": 0.5, "center_y": 0.50}
@@ -32,7 +32,7 @@ ScreenManager:
                     text: "Email"
 
 
-            MDTextField:    #Input Senha
+            MDTextField:
                 id: password_input
                 mode: 'outlined'
                 pos_hint: {"center_x": 0.5, "center_y": 0.38}
@@ -52,7 +52,7 @@ ScreenManager:
                     text: "Senha"
 
 
-            MDButton:   #Entrar Button
+            MDButton:
                 id: 'entrar_button'
                 style: "filled"
                 theme_width: "Custom"
@@ -72,7 +72,7 @@ ScreenManager:
                     pos_hint: {"center_x": .5, "center_y": .5}
                     
             
-            MDButton:   #Registrar Button
+            MDButton:
                 id: 'registrar_button'
                 style: "filled"
                 theme_width: "Custom"
@@ -97,19 +97,46 @@ ScreenManager:
 <EstoqueScreen>
     name: 'Tela de Estoque'
     MDScreen:
-        md_bg_color: (1,0,0,1)
+        MDBoxLayout:
+            md_bg_color: (179/255,209/255,200/255,1)
+            orientation: 'vertical'
 
-
-        MDLabel:
-            orientation: 'horizontal'
-            text: "11111"
-            halign: "center"
-            md_bg_color: (1,1,1,1)
-
-        MDTopAppBar:
-
-            MDTopAppBarTitle:
-                text: "Estoque"
+            MDTopAppBar:
+                type: 'small'
                 
-            
+                MDTopAppBarLeadingButtonContainer:
+                    MDActionTopAppBarButton:
+                        icon: "arrow-left"
+                        on_release: root.manager.current="Tela de Login"
 
+                
+                MDTopAppBarTitle:
+                    text: "Estoque"
+
+        
+            MDLabel:
+                md_bg_color: (179/255,209/255,200/255,1)
+                orientation: 'vertical'
+                halign: 'center'
+                text: 'Teste'
+
+            MDNavigationBar:
+                canvas: 
+                    
+                MDNavigationItem:
+                    MDNavigationItemIcon:
+                        icon:'alpha'
+                    MDNavigationItemLabel:
+                        text: 'Análise'
+            
+                MDNavigationItem:
+                    MDNavigationItemIcon:
+                        icon: 'truck'
+                    MDNavigationItemLabel:
+                        text: 'Movimentações'
+
+                MDNavigationItem:
+                    MDNavigationItemIcon:
+                        icon: 'cog'
+                    MDNavigationItemLabel:
+                        text: 'Configurações'

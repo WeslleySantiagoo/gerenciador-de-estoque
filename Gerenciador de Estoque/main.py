@@ -1,13 +1,10 @@
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
-from kivymd.uix.screenmanager import ScreenManager
 from kivy.uix.filechooser import Screen
-from kivy.uix.popup import Popup
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
 from kivy.core.text import LabelBase
+from kivy.clock import Clock
+
 import functions
 import pyrebase
 
@@ -29,6 +26,7 @@ db = fb.database()
 
 
 class LoginScreen(Screen):
+    nome = ''
     def verify_dominion_email(self, email_field):
             if email_field.text != "":
                 email_field.error = not email_field.text.endswith('@ufrpe.br')
@@ -44,8 +42,8 @@ class LoginScreen(Screen):
 
     def sign_in_button(self, email, password):
         sign_in = functions.sign_in_db(email, password)
-        # if sign_in == "Logado com sucesso":
-        #     self.manager.current='Tela de Estoque'
+        if sign_in == "Logado com sucesso":
+            self.manager.current='Tela de Estoque'
         self.manager.current='Tela de Estoque'
         return self.open_popup_sign_in(sign_in)
     
@@ -64,8 +62,16 @@ class LoginScreen(Screen):
     pass
 
 class EstoqueScreen(Screen):
+    infos = {}
+    def on_start(self):
+        Clock.schedule_once(self.update(), 1)
+        
+    def update(self):
+        nome = getattr(LoginScreen, 'nome')
+        self.root.ids.email_label.text = nome
+        
 
-    pass
+
 
 class MainApp(MDApp):
     dialog = None
@@ -75,4 +81,8 @@ class MainApp(MDApp):
         self.theme_cls.primary_palette = 'Green'
         self.theme_cls.theme_style = "Light"
         return Builder.load_file('telas.kv')
+    
+        
+
+
 MainApp().run()
