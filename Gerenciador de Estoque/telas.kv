@@ -1,9 +1,13 @@
 ScreenManager:
     LoginScreen:
     EstoqueScreen:
+    AnaliseScreen:
+    MovimentacoesScreen:
+    ConfiguracoesScreen:
+    
 
 <LoginScreen>
-    name: "Tela de Login"
+    name: 'Tela de Login'
     MDScreen:
         MDFloatLayout:
             orientation: 'vertical'
@@ -99,6 +103,7 @@ ScreenManager:
     MDScreen:
         md_bg_color: (174/255,209/255,200/255,1)
         MDBoxLayout:
+            id: main_box
             md_bg_color: (179/255,209/255,200/255,1)
             orientation: 'vertical'
 
@@ -120,17 +125,15 @@ ScreenManager:
                 MDTopAppBarLeadingButtonContainer:
                     MDActionTopAppBarButton:
                         icon: "arrow-left"
-                        on_release: root.manager.current="Tela de Login"
+                        on_release: root.manager.current='Tela de Login'
 
                 MDActionTopAppBarButton:
                     icon: 'autorenew'
                     on_release: root.update_list_estoque()
 
-                    
-
-                
                 MDTopAppBarTitle:
                     text: "Estoque"
+
 
             MDBoxLayout:
                 orientation: 'horizontal'
@@ -143,10 +146,6 @@ ScreenManager:
                         spacing: '10dp'
                         
 
-
-
-                    
-
             MDNavigationBar:
                 theme_text_color: 'Custom'
                 font_name: 'Fonts/Poppins-Bold.ttf'
@@ -158,19 +157,173 @@ ScreenManager:
                     Color: 
                         rgba: 46/255, 139/255, 87/255, 1
                 MDNavigationItem:
+                    indicator_color: (0,0,0,0)
+                    on_release: root.manager.current='Tela de Analise'
                     MDNavigationItemIcon:
                         icon:'chart-bar'
                     MDNavigationItemLabel:
                         text: 'Análise'
             
                 MDNavigationItem:
+                    indicator_color: (0,0,0,0)
+                    on_release: root.manager.current='Tela de Movimentacoes'
                     MDNavigationItemIcon:
                         icon: 'truck'
                     MDNavigationItemLabel:
                         text: 'Movimentações'
 
                 MDNavigationItem:
+                    indicator_color: (0,0,0,0)
+                    on_release: root.manager.current='Tela de Configuracoes'
                     MDNavigationItemIcon:
                         icon: 'cog'
                     MDNavigationItemLabel:
                         text: 'Configurações'
+
+
+<AnaliseScreen>
+    name: 'Tela de Analise'
+    MDScreen:
+        md_bg_color: (174/255,209/255,200/255,1)
+        MDBoxLayout:
+            md_bg_color: (179/255,209/255,200/255,1)
+            orientation: 'vertical'
+
+            MDTopAppBar:
+                type: 'small'
+                theme_text_color: 'Custom'
+                font_name: 'Fonts/Poppins-Bold.ttf'
+                theme_bg_color: "Custom"
+                md_bg_color: "#AED1C8"
+                theme_icon_color: "Custom"
+                icon_color: "#2C4A44"
+                canvas.after:
+                    Color: 
+                        rgba: 46/255, 139/255, 87/255, 1  
+                    Line:
+                        width: 2  
+                        points: [self.x, self.y, self.right, self.y]
+                
+                MDTopAppBarLeadingButtonContainer:
+                    MDActionTopAppBarButton:
+                        icon: "arrow-left"
+                        on_release: root.manager.current='Tela de Estoque'
+
+                MDTopAppBarTitle:
+                    text: "Análise"
+        
+            MDBoxLayout:
+                orientation: 'horizontal'
+                padding: [10,0,10,0]
+                md_bg_color: (174/255,209/255,200/255,1)
+
+
+<MovimentacoesScreen>
+    name: 'Tela de Movimentacoes'
+    MDScreen:
+        md_bg_color: (174/255,209/255,200/255,1)
+        MDBoxLayout:
+            md_bg_color: (179/255,209/255,200/255,1)
+            orientation: 'vertical'
+
+            MDTopAppBar:
+                type: 'small'
+                theme_text_color: 'Custom'
+                font_name: 'Fonts/Poppins-Bold.ttf'
+                theme_bg_color: "Custom"
+                md_bg_color: "#AED1C8"
+                theme_icon_color: "Custom"
+                icon_color: "#2C4A44"
+                canvas.after:
+                    Color: 
+                        rgba: 46/255, 139/255, 87/255, 1  
+                    Line:
+                        width: 2  
+                        points: [self.x, self.y, self.right, self.y]
+                
+                MDTopAppBarLeadingButtonContainer:
+                    MDActionTopAppBarButton:
+                        icon: "arrow-left"
+                        on_release: root.manager.current='Tela de Estoque'
+
+                MDTopAppBarTitle:
+                    text: "Movimentações"
+            MDBoxLayout:
+                orientation: 'horizontal'
+                padding: [10,0,10,0]
+                md_bg_color: (174/255,209/255,200/255,1)
+
+
+<ConfiguracoesScreen>
+    name: 'Tela de Configuracoes'
+    MDScreen:
+        md_bg_color: (174/255,209/255,200/255,1)
+        MDBoxLayout:
+            md_bg_color: (179/255,209/255,200/255,1)
+            orientation: 'vertical'
+
+            MDTopAppBar:
+                type: 'small'
+                theme_text_color: 'Custom'
+                font_name: 'Fonts/Poppins-Bold.ttf'
+                theme_bg_color: "Custom"
+                md_bg_color: "#AED1C8"
+                theme_icon_color: "Custom"
+                icon_color: "#2C4A44"
+                canvas.after:
+                    Color: 
+                        rgba: 46/255, 139/255, 87/255, 1  
+                    Line:
+                        width: 2  
+                        points: [self.x, self.y, self.right, self.y]
+                
+                MDTopAppBarLeadingButtonContainer:
+                    MDActionTopAppBarButton:
+                        icon: "arrow-left"
+                        on_release: root.manager.current='Tela de Estoque'
+
+                MDTopAppBarTitle:
+                    text: "Configurações"
+
+            MDFloatLayout:
+                orientation: 'horizontal'
+                md_bg_color: (174/255,209/255,200/255,1)
+
+                MDButton:
+                    id: 'entrar_button'
+                    style: "filled"
+                    theme_width: "Custom"
+                    height: "40dp"
+                    size_hint_x: .38
+                    pos_hint: {'center_x': 0.5,'center_y': 0.55}
+                    theme_bg_color: 'Custom'
+                    md_bg_color: (46/255, 139/255, 87/255, 1)
+                    on_release: root.logout()
+
+                    MDButtonText:
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Bold.ttf'
+                        text_color: (1,1,1,1)
+                        text: "Sair"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    id: 'entrar_button'
+                    style: "filled"
+                    theme_width: "Custom"
+                    height: "40dp"
+                    size_hint_x: .38
+                    pos_hint: {'center_x': 0.5,'center_y': 0.45}
+                    theme_bg_color: 'Custom'
+                    md_bg_color: (46/255, 139/255, 87/255, 1)
+                    on_release: root.close_app()
+
+                    MDButtonText:
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Bold.ttf'
+                        text_color: (1,1,1,1)
+                        text: "Fechar App"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+
+

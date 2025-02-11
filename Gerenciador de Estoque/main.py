@@ -1,12 +1,9 @@
-from kivy.uix.gridlayout import product
-from kivy.uix.actionbar import Label
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.filechooser import Screen
 from kivy.core.text import LabelBase
 from kivy.clock import Clock
-from kivymd.uix.label import MDLabel
 from kivymd.uix.list import (
     MDListItem,
     MDListItemHeadlineText,
@@ -16,12 +13,21 @@ from kivymd.uix.list import (
 )
 
 
+
 import functions
 import pyrebase
 
 global db
 
-config = {}
+config = {
+    "apiKey": "SUA_API_KEY",
+    "authDomain": "SEU_PROJETO.firebaseapp.com",
+    "databaseURL": "https://SEU_PROJETO.firebaseio.com",
+    "storageBucket": "SEU_PROJETO.appspot.com",
+    'messagingSenderId': "SEU_SENDER_ID",
+    'appId': "SUA_APP_ID",
+    'easurementId': "SEU_EASUREMENT_ID"
+}
 
 LabelBase.register(name='Poppins', fn_regular='Fonts/Poppins-Bold.ttf')
 fb = pyrebase.initialize_app(config)
@@ -29,16 +35,21 @@ db = fb.database()
 
 
 class LoginScreen(Screen):
+    def clear_fields(self):
+        self.ids.email_input.text='@ufrpe.br'
+        self.ids.password_input.text=''
+
+
     def verify_dominion_email(self, email_field):
             if email_field.text != "":
                 email_field.error = not email_field.text.endswith('@ufrpe.br')
 
 
-    def invalid_password(self, password: str) -> str:
+    def invalid_password(self, password):
         if len(password) < 6:
             return True
         return False
-
+        
 
     def verify_password(self, password_field):
         password_field.error = self.invalid_password(password_field.text) != False
@@ -46,28 +57,21 @@ class LoginScreen(Screen):
 
     def sign_in_button(self, email, password):
         sign_in = functions.sign_in_db(email, password)
-        # if sign_in == "Logado com sucesso":           #TEST MODE
-        #     self.manager.current='Tela de Estoque'    #TEST MODE
-        self.manager.current='Tela de Estoque'
-        return self.open_popup_sign_in(sign_in)
+        if sign_in == "Logado com sucesso":           #TEST MODE
+            self.clear_fields()
+            self.manager.current='Tela de Estoque'    #TEST MODE
+        # self.manager.current='Tela de Estoque'      #TEST MODE
+        return functions.open_snackbar_sign_in(sign_in)
     
 
     def sign_up_button(self, email, password):
         sign_up = functions.sign_up_db(email, password)
-        return self.open_popup_sing_up(sign_up)
-    
-    
-    def open_popup_sign_in(self, msg):
-        return functions.open_popup_sign_in(msg)
-    
-
-    def open_popup_sing_up(self, msg):
-        return functions.open_popup_sign_up(msg) 
+        return functions.open_snackbar_sign_up(sign_up)
 
 
 class EstoqueScreen(Screen):
     def on_enter(self):
-        Clock.schedule_once(self.add_items, 1)
+        Clock.schedule_once(self.add_items, 0.1)
 
 
     def add_items(self, a=None):
@@ -86,8 +90,31 @@ class EstoqueScreen(Screen):
         lista.clear_widgets()
         self.add_items()
 
+
+class AnaliseScreen(Screen):
+    pass
+
+
+class MovimentacoesScreen(Screen):
+    pass
+
+
+class ConfiguracoesScreen(Screen):
+    def logout(self):
+        functions.open_snackbar_logout('Seção encerrada')
+        Clock.schedule_once(self.exit_sreen, 0.5)
+
+
+    def exit_sreen(self,a=None):
+        self.manager.current='Tela de Login'
+
+
+    def close_app(self, a=None):
+        app = MDApp.get_running_app()
+        app.stop()
+
+
 class MainApp(MDApp):
-    dialog = None
     def build(self):
         Window.size = (360, 640)
         self.title = "Genciador de Estoque"

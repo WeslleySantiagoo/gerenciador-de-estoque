@@ -1,21 +1,25 @@
-#pendente
 import pyrebase
-from kivy.uix.popup import Popup
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
+from kivymd.uix.snackbar import MDSnackbar,MDSnackbarText
 
-config = {}
+config = {
+    "apiKey": "SUA_API_KEY",
+    "authDomain": "SEU_PROJETO.firebaseapp.com",
+    "databaseURL": "https://SEU_PROJETO.firebaseio.com",
+    "storageBucket": "SEU_PROJETO.appspot.com",
+    'messagingSenderId': "SEU_SENDER_ID",
+    'appId': "SUA_APP_ID",
+    'easurementId': "SEU_EASUREMENT_ID"
+}
+
 global fb, auth, user, db
 fb = pyrebase.initialize_app(config)
 db = fb.database()
-
+auth = fb.auth()
 
 def sign_in_db(email, password):
     if len(email) > 9:
         if email[-9:] == '@ufrpe.br':
             if len(password) >= 6:
-                auth = fb.auth()
                 try:
                     user = auth.sign_in_with_email_and_password(email, password)
                     return "Logado com sucesso"
@@ -34,7 +38,6 @@ def sign_up_db(email, password):
     if len(email) > 9:
         if email[-9:] == '@ufrpe.br':
             if len(password) >= 6:
-                auth = fb.auth()
                 try:
                     user = auth.create_user_with_email_and_password(email, password)
                     return "Conta criada com sucesso"
@@ -47,38 +50,43 @@ def sign_up_db(email, password):
         return 'Email pequeno demais'
         
 
-def open_popup_sign_in(msg):
-        popup = Popup(
-            title="Sign In",
-            size_hint=(None, None),
-            size=(300, 150),
-            background_color=(1,1,1,1)
-        )
-        fechar_btn = Button(text="Fechar")
-        fechar_btn.bind(on_press=popup.dismiss)
-        layout = BoxLayout(orientation='vertical')
-        layout.add_widget(Label(text=msg))
-        layout.add_widget(fechar_btn)
-        popup.add_widget(layout)
-        popup.open()
+def open_snackbar_sign_in(msg):
+    MDSnackbar(
+        MDSnackbarText(
+            text=msg,
+            pos_hint= {'center_x': 0.5,'center_y': 0.5},
+        ),
+        orientation="horizontal",
+        pos_hint={"center_x": 0.5, "center_y":0.06},
+        size_hint_x=0.9,
+        duration=1,
+    ).open()
 
 
-def open_popup_sign_up(msg):
-        popup = Popup(
-            title="Sign Up",
-            size_hint=(None, None),
-            size=(300, 150),
-            background_color=(1,1,1,1)
-        )
+def open_snackbar_sign_up(msg):
+    MDSnackbar(
+        MDSnackbarText(
+            text=msg,
+            pos_hint= {'center_x': 0.5,'center_y': 0.5},
+        ),
+        orientation="horizontal",
+        pos_hint={"center_x": 0.5, "center_y":0.06},
+        size_hint_x=0.9,
+        duration=1,
+    ).open()
+        
 
-        fechar_btn = Button(text="Fechar")
-        fechar_btn.bind(on_press=popup.dismiss)
-
-        layout = BoxLayout(orientation='vertical')
-        layout.add_widget(Label(text=msg))
-        layout.add_widget(fechar_btn)
-        popup.add_widget(layout)
-        popup.open()
+def open_snackbar_logout(msg):
+    MDSnackbar(
+        MDSnackbarText(
+            text=msg,
+            pos_hint= {'center_x': 0.5,'center_y': 0.5},
+        ),
+        orientation="horizontal",
+        pos_hint={"center_x": 0.5, "center_y":0.06},
+        size_hint_x=0.9,
+        duration=1,
+    ).open()
 
 
 def get_db_estoque():
@@ -90,5 +98,5 @@ def get_db_estoque():
             'qtEstoque': str(estoque.val()[i]['qtEstoque'])
         }
         lista[str(i)] = description
-
     return lista
+
