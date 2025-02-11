@@ -5,17 +5,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 
-config = {
-    'apiKey': "AIzaSyAJlxRR9YogNG0Hnztn618x8I7pAQVoCZc",
-'authDomain': "gerenciador-de-estoque-pisi-i.firebaseapp.com",
-'databaseURL': "https://gerenciador-de-estoque-pisi-i-default-rtdb.firebaseio.com",
-'projectId': "gerenciador-de-estoque-pisi-i",
-'storageBucket': "gerenciador-de-estoque-pisi-i.firebasestorage.app",
-'messagingSenderId': "148937568721",
-'appId': "1:148937568721:web:95b0e583f8ee82538230f0",
-'easurementId': "G-2001V6GRXW"
-}
+config = {}
+global fb, auth, user, db
 fb = pyrebase.initialize_app(config)
+db = fb.database()
 
 
 def sign_in_db(email, password):
@@ -86,3 +79,16 @@ def open_popup_sign_up(msg):
         layout.add_widget(fechar_btn)
         popup.add_widget(layout)
         popup.open()
+
+
+def get_db_estoque():
+    lista = dict()
+    estoque = db.child('Estoque').get()
+    for i in estoque.val():
+        description = {
+            'codigo': str(estoque.val()[i]['codigo']),
+            'qtEstoque': str(estoque.val()[i]['qtEstoque'])
+        }
+        lista[str(i)] = description
+
+    return lista

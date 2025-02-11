@@ -1,49 +1,53 @@
+from kivy.uix.gridlayout import product
+from kivy.uix.actionbar import Label
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.filechooser import Screen
 from kivy.core.text import LabelBase
 from kivy.clock import Clock
+from kivymd.uix.label import MDLabel
+from kivymd.uix.list import (
+    MDListItem,
+    MDListItemHeadlineText,
+    MDListItemSupportingText,
+    MDListItemTertiaryText,
+    MDListItemTrailingIcon
+)
+
 
 import functions
 import pyrebase
 
 global db
 
-config = {
-    'apiKey': "AIzaSyAJlxRR9YogNG0Hnztn618x8I7pAQVoCZc",
-'authDomain': "gerenciador-de-estoque-pisi-i.firebaseapp.com",
-'databaseURL': "https://gerenciador-de-estoque-pisi-i-default-rtdb.firebaseio.com",
-'projectId': "gerenciador-de-estoque-pisi-i",
-'storageBucket': "gerenciador-de-estoque-pisi-i.firebasestorage.app",
-'messagingSenderId': "148937568721",
-'appId': "1:148937568721:web:95b0e583f8ee82538230f0",
-'easurementId': "G-2001V6GRXW"
-}
+config = {}
+
 LabelBase.register(name='Poppins', fn_regular='Fonts/Poppins-Bold.ttf')
 fb = pyrebase.initialize_app(config)
 db = fb.database()
 
 
 class LoginScreen(Screen):
-    nome = ''
     def verify_dominion_email(self, email_field):
             if email_field.text != "":
                 email_field.error = not email_field.text.endswith('@ufrpe.br')
+
 
     def invalid_password(self, password: str) -> str:
         if len(password) < 6:
             return True
         return False
-            
+
+
     def verify_password(self, password_field):
         password_field.error = self.invalid_password(password_field.text) != False
 
 
     def sign_in_button(self, email, password):
         sign_in = functions.sign_in_db(email, password)
-        if sign_in == "Logado com sucesso":
-            self.manager.current='Tela de Estoque'
+        # if sign_in == "Logado com sucesso":           #TEST MODE
+        #     self.manager.current='Tela de Estoque'    #TEST MODE
         self.manager.current='Tela de Estoque'
         return self.open_popup_sign_in(sign_in)
     
@@ -59,19 +63,28 @@ class LoginScreen(Screen):
 
     def open_popup_sing_up(self, msg):
         return functions.open_popup_sign_up(msg) 
-    pass
+
 
 class EstoqueScreen(Screen):
-    infos = {}
-    def on_start(self):
-        Clock.schedule_once(self.update(), 1)
-        
-    def update(self):
-        nome = getattr(LoginScreen, 'nome')
-        self.root.ids.email_label.text = nome
-        
+    def on_enter(self):
+        Clock.schedule_once(self.add_items, 1)
 
 
+    def add_items(self, a=None):
+        lista = self.ids.main_scroll
+        for k, v in functions.get_db_estoque().items():
+            item = MDListItem(radius=[10,10,10,10])
+            item.add_widget(MDListItemTrailingIcon(icon='hammer-screwdriver'))
+            item.add_widget(MDListItemHeadlineText(text=k))
+            item.add_widget(MDListItemSupportingText(text=f"Código: {v['codigo']}"))
+            item.add_widget(MDListItemTertiaryText(text=f"Quantidade em Estoque: {v['qtEstoque']}"))
+            lista.add_widget(item)
+
+
+    def update_list_estoque(self):
+        lista = lista = self.ids.main_scroll
+        lista.clear_widgets()
+        self.add_items()
 
 class MainApp(MDApp):
     dialog = None

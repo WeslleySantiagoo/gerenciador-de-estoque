@@ -62,7 +62,7 @@ ScreenManager:
                 theme_bg_color: 'Custom'
                 md_bg_color: (46/255, 139/255, 87/255, 1)
                 on_release: root.sign_in_button(email_input.text, password_input.text)
-                #on_press: app.sign_in_button(email_input.text, password_input.text)
+                
 
                 MDButtonText:
                     theme_font_name: 'Custom'
@@ -97,35 +97,69 @@ ScreenManager:
 <EstoqueScreen>
     name: 'Tela de Estoque'
     MDScreen:
+        md_bg_color: (174/255,209/255,200/255,1)
         MDBoxLayout:
             md_bg_color: (179/255,209/255,200/255,1)
             orientation: 'vertical'
 
             MDTopAppBar:
                 type: 'small'
+                theme_text_color: 'Custom'
+                font_name: 'Fonts/Poppins-Bold.ttf'
+                theme_bg_color: "Custom"
+                md_bg_color: "#AED1C8"
+                theme_icon_color: "Custom"
+                icon_color: "#2C4A44"
+                canvas.after:
+                    Color: 
+                        rgba: 46/255, 139/255, 87/255, 1  
+                    Line:
+                        width: 2  
+                        points: [self.x, self.y, self.right, self.y]
                 
                 MDTopAppBarLeadingButtonContainer:
                     MDActionTopAppBarButton:
                         icon: "arrow-left"
                         on_release: root.manager.current="Tela de Login"
 
+                MDActionTopAppBarButton:
+                    icon: 'autorenew'
+                    on_release: root.update_list_estoque()
+
+                    
+
                 
                 MDTopAppBarTitle:
                     text: "Estoque"
 
-        
-            MDLabel:
-                md_bg_color: (179/255,209/255,200/255,1)
-                orientation: 'vertical'
-                halign: 'center'
-                text: 'Teste'
+            MDBoxLayout:
+                orientation: 'horizontal'
+                padding: [10,0,10,0]
+                md_bg_color: (174/255,209/255,200/255,1)
+
+                MDScrollView:
+                    MDList:
+                        id: main_scroll
+                        spacing: '10dp'
+                        
+
+
+
+                    
 
             MDNavigationBar:
-                canvas: 
-                    
+                theme_text_color: 'Custom'
+                font_name: 'Fonts/Poppins-Bold.ttf'
+                theme_bg_color: "Custom"
+                md_bg_color: "#AED1C8"
+                theme_icon_color: "Custom"
+                icon_color: "#2C4A44"
+                canvas.after:
+                    Color: 
+                        rgba: 46/255, 139/255, 87/255, 1
                 MDNavigationItem:
                     MDNavigationItemIcon:
-                        icon:'alpha'
+                        icon:'chart-bar'
                     MDNavigationItemLabel:
                         text: 'Análise'
             
