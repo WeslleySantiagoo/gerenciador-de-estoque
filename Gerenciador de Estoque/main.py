@@ -2,7 +2,6 @@ from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.filechooser import Screen
-from kivy.core.text import LabelBase
 from kivy.clock import Clock
 from kivymd.uix.list import (
     MDListItem,
@@ -29,7 +28,7 @@ config = {
     'easurementId': "SEU_EASUREMENT_ID"
 }
 
-LabelBase.register(name='Poppins', fn_regular='Fonts/Poppins-Bold.ttf')
+
 fb = pyrebase.initialize_app(config)
 db = fb.database()
 
@@ -57,10 +56,10 @@ class LoginScreen(Screen):
 
     def sign_in_button(self, email, password):
         sign_in = functions.sign_in_db(email, password)
-        if sign_in == "Logado com sucesso":           #TEST MODE
-            self.clear_fields()
-            self.manager.current='Tela de Estoque'    #TEST MODE
-        # self.manager.current='Tela de Estoque'      #TEST MODE
+        if sign_in == "Logado com sucesso":           #TEST MODE A
+            self.clear_fields()                       #TEST MODE A
+            self.manager.current='Tela de Estoque'    #TEST MODE A
+        # self.manager.current='Tela de Estoque'      #TEST MODE B
         return functions.open_snackbar_sign_in(sign_in)
     
 
@@ -72,6 +71,7 @@ class LoginScreen(Screen):
 class EstoqueScreen(Screen):
     def on_enter(self):
         Clock.schedule_once(self.add_items, 0.1)
+        Clock.schedule_once(self.update_list_estoque, 0.2)
 
 
     def add_items(self, a=None):
@@ -85,7 +85,7 @@ class EstoqueScreen(Screen):
             lista.add_widget(item)
 
 
-    def update_list_estoque(self):
+    def update_list_estoque(self, a=None):
         lista = lista = self.ids.main_scroll
         lista.clear_widgets()
         self.add_items()
@@ -112,6 +112,18 @@ class ConfiguracoesScreen(Screen):
     def close_app(self, a=None):
         app = MDApp.get_running_app()
         app.stop()
+
+
+class CadastroProdutoScreen(Screen):
+    pass
+
+
+class EntradaProdutoScreen(Screen):
+    pass
+
+
+class SaidaProdutoScreen(Screen):
+    pass
 
 
 class MainApp(MDApp):

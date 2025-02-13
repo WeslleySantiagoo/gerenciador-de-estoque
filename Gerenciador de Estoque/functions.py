@@ -100,3 +100,41 @@ def get_db_estoque():
         lista[str(i)] = description
     return lista
 
+
+def graphic_generate():
+    import matplotlib.pyplot as plt
+
+    sizes = [50, 50]
+    colors = ['#2F47ED', '#ED3A3A']
+
+    # Criar figura e eixos
+    fig, ax = plt.subplots(figsize=(5, 5), dpi=100)  # 300x300px
+
+    # Criar o gráfico de pizza
+    wedges, _ = ax.pie(
+        sizes, colors=colors,
+        startangle=90,
+        wedgeprops={'edgecolor': '#AED1C8'}
+    )
+
+    # Criar o círculo central (anel)
+    center_circle = plt.Circle((0, 0), 0.6, fc='#AED1C8', linewidth=2)
+    ax.add_artist(center_circle)
+
+    # Remover margens
+    ax.set_xlim(-1, 1)  # Ajusta os limites para ficar bem próximo da borda
+    ax.set_ylim(-1, 1)
+    plt.axis('off')  # Remove completamente os eixos
+
+    # Ajustar a posição do gráfico para ocupar 100% da imagem
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+
+    # Salvar imagem sem bordas extras
+    plt.savefig(
+        "Gerenciador de Estoque/Images/ring_graphic.png",
+        dpi=100,
+        bbox_inches='tight',
+        transparent=True,
+        pad_inches=0
+    )
+

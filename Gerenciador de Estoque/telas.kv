@@ -4,7 +4,10 @@ ScreenManager:
     AnaliseScreen:
     MovimentacoesScreen:
     ConfiguracoesScreen:
-    
+    CadastroProdutoScreen:
+    EntradaProdutoScreen:
+    SaidaProdutoScreen:
+
 
 <LoginScreen>
     name: 'Tela de Login'
@@ -18,7 +21,7 @@ ScreenManager:
                 size_hint: None, None
                 size: ('150dp','150dp')
                 pos_hint: {'center_x': 0.5,'center_y': 0.7}
-            
+
 
             MDTextField:
                 id: email_input
@@ -32,8 +35,11 @@ ScreenManager:
                 MDTextFieldHelperText:
                     text: 'O domínio deve ser @ufrpe.br'
 
+
                 MDTextFieldHintText:
                     text: "Email"
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Regular.ttf'
 
 
             MDTextField:
@@ -42,8 +48,7 @@ ScreenManager:
                 pos_hint: {"center_x": 0.5, "center_y": 0.38}
                 text_size: '10dp'
                 password: True
-                size_hint: None, None
-                size: '250dp','40dp'
+                size_hint: 0.7, None
                 theme_line_color: "Custom"
                 line_color_normal: (209/255, 209/255, 209/255, 1)
                 on_text: root.verify_password(self)
@@ -54,6 +59,8 @@ ScreenManager:
 
                 MDTextFieldHintText:
                     text: "Senha"
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Regular.ttf'
 
 
             MDButton:
@@ -66,7 +73,7 @@ ScreenManager:
                 theme_bg_color: 'Custom'
                 md_bg_color: (46/255, 139/255, 87/255, 1)
                 on_release: root.sign_in_button(email_input.text, password_input.text)
-                
+
 
                 MDButtonText:
                     theme_font_name: 'Custom'
@@ -74,8 +81,8 @@ ScreenManager:
                     text_color: (1,1,1,1)
                     text: "Entrar"
                     pos_hint: {"center_x": .5, "center_y": .5}
-                    
-            
+
+
             MDButton:
                 id: 'registrar_button'
                 style: "filled"
@@ -121,18 +128,31 @@ ScreenManager:
                     Line:
                         width: 2  
                         points: [self.x, self.y, self.right, self.y]
-                
-                MDTopAppBarLeadingButtonContainer:
-                    MDActionTopAppBarButton:
-                        icon: "arrow-left"
-                        on_release: root.manager.current='Tela de Login'
-
-                MDActionTopAppBarButton:
-                    icon: 'autorenew'
-                    on_release: root.update_list_estoque()
 
                 MDTopAppBarTitle:
                     text: "Estoque"
+                    text_color: ('#2C4A44')
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Bold.ttf'
+
+
+                MDTopAppBarTrailingButtonContainer:
+                    MDActionTopAppBarButton:
+
+                        icon: 'autorenew'
+                        on_release: root.update_list_estoque()
+                    MDActionTopAppBarButton:
+
+                        icon: 'plus'
+                        on_release: root.manager.current='Tela de Cadastro de Produtos'
+                    MDActionTopAppBarButton:
+
+                        icon: 'arrow-up'
+                        on_release: root.manager.current='Tela de Entrada de Produtos'
+                    MDActionTopAppBarButton:
+
+                        icon: 'arrow-down'
+                        on_release: root.manager.current='Tela de Saida de Produtos'
 
 
             MDBoxLayout:
@@ -144,7 +164,7 @@ ScreenManager:
                     MDList:
                         id: main_scroll
                         spacing: '10dp'
-                        
+
 
             MDNavigationBar:
                 theme_text_color: 'Custom'
@@ -154,7 +174,7 @@ ScreenManager:
                 theme_icon_color: "Custom"
                 icon_color: "#2C4A44"
                 canvas.after:
-                    Color: 
+                    Color:
                         rgba: 46/255, 139/255, 87/255, 1
                 MDNavigationItem:
                     indicator_color: (0,0,0,0)
@@ -163,7 +183,9 @@ ScreenManager:
                         icon:'chart-bar'
                     MDNavigationItemLabel:
                         text: 'Análise'
-            
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Regular.ttf'
+
                 MDNavigationItem:
                     indicator_color: (0,0,0,0)
                     on_release: root.manager.current='Tela de Movimentacoes'
@@ -171,6 +193,8 @@ ScreenManager:
                         icon: 'truck'
                     MDNavigationItemLabel:
                         text: 'Movimentações'
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Regular.ttf'
 
                 MDNavigationItem:
                     indicator_color: (0,0,0,0)
@@ -179,6 +203,8 @@ ScreenManager:
                         icon: 'cog'
                     MDNavigationItemLabel:
                         text: 'Configurações'
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Regular.ttf'
 
 
 <AnaliseScreen>
@@ -191,19 +217,15 @@ ScreenManager:
 
             MDTopAppBar:
                 type: 'small'
-                theme_text_color: 'Custom'
-                font_name: 'Fonts/Poppins-Bold.ttf'
                 theme_bg_color: "Custom"
                 md_bg_color: "#AED1C8"
-                theme_icon_color: "Custom"
-                icon_color: "#2C4A44"
                 canvas.after:
-                    Color: 
-                        rgba: 46/255, 139/255, 87/255, 1  
+                    Color:
+                        rgba: 46/255, 139/255, 87/255, 1
                     Line:
-                        width: 2  
+                        width: 2
                         points: [self.x, self.y, self.right, self.y]
-                
+
                 MDTopAppBarLeadingButtonContainer:
                     MDActionTopAppBarButton:
                         icon: "arrow-left"
@@ -211,11 +233,83 @@ ScreenManager:
 
                 MDTopAppBarTitle:
                     text: "Análise"
-        
+                    text_color: ('#2C4A44')
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Bold.ttf'
+
             MDBoxLayout:
-                orientation: 'horizontal'
-                padding: [10,0,10,0]
-                md_bg_color: (174/255,209/255,200/255,1)
+                orientation: 'vertical'
+                MDLabel:
+                    halign: 'center'
+                    md_bg_color: (179/255,209/255,200/255,1)
+                    text: 'Entradas e Saídas'
+                    text_color: ('#2C4A44')
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Bold.ttf'
+                    size_hint_y: 0.2
+
+                FitImage:
+                    source: "Images/ring_graphic.png"
+                    size_hint: (None, None)
+                    size: '300dp','300dp'
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: 0.3
+                    MDFloatLayout:
+                        MDIcon:
+                            icon: 'arrow-up-drop-circle'
+                            icon_color: '#2F47ED'
+                            pos_hint: {'center_x': 0.8,'center_y': 0.54}
+                            
+
+                    MDLabel:
+                        text: "Entrada"
+                        halign: 'left'
+                        text_color: ('#2C4A44')
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Bold.ttf'
+                        size_hint_x: 0.75
+
+                    MDFloatLayout:
+                        size_hint_x: 0.8
+                        MDIcon:
+                            icon: 'arrow-down-drop-circle'
+                            icon_color: '#ED3A3A'
+                            pos_hint: {'center_x': 0.8,'center_y': 0.54}
+
+                    MDLabel:
+                        text: "Saída"
+                        halign: 'left'
+                        text_color: ('#2C4A44')
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Bold.ttf'
+
+                MDFloatLayout:
+                    md_bg_color: (179/255,209/255,200/255,1)
+                    orientation: 'vertical'
+                    size_hint_y: 0.5
+                    MDButton:
+                        id: 'entrar_button'
+                        style: "filled"
+                        theme_width: "Custom"
+                        size_hint: (None, None)
+                        size: '200dp','50dp'
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        theme_bg_color: 'Custom'
+                        md_bg_color: (46/255, 139/255, 87/255, 1)
+
+
+                        MDButtonText:
+                            theme_font_name: 'Custom'
+                            font_name: 'Fonts/Poppins-Bold.ttf'
+                            text_color: (1,1,1,1)
+                            text: "Gerar PDF"
+                            pos_hint: {"center_x": .5, "center_y": .5}
+        
+                    
+
 
 
 <MovimentacoesScreen>
@@ -228,19 +322,15 @@ ScreenManager:
 
             MDTopAppBar:
                 type: 'small'
-                theme_text_color: 'Custom'
-                font_name: 'Fonts/Poppins-Bold.ttf'
                 theme_bg_color: "Custom"
                 md_bg_color: "#AED1C8"
-                theme_icon_color: "Custom"
-                icon_color: "#2C4A44"
                 canvas.after:
-                    Color: 
-                        rgba: 46/255, 139/255, 87/255, 1  
+                    Color:
+                        rgba: 46/255, 139/255, 87/255, 1
                     Line:
-                        width: 2  
+                        width: 2
                         points: [self.x, self.y, self.right, self.y]
-                
+
                 MDTopAppBarLeadingButtonContainer:
                     MDActionTopAppBarButton:
                         icon: "arrow-left"
@@ -248,6 +338,10 @@ ScreenManager:
 
                 MDTopAppBarTitle:
                     text: "Movimentações"
+                    text_color: ('#2C4A44')
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Bold.ttf'
+
             MDBoxLayout:
                 orientation: 'horizontal'
                 padding: [10,0,10,0]
@@ -264,19 +358,15 @@ ScreenManager:
 
             MDTopAppBar:
                 type: 'small'
-                theme_text_color: 'Custom'
-                font_name: 'Fonts/Poppins-Bold.ttf'
                 theme_bg_color: "Custom"
                 md_bg_color: "#AED1C8"
-                theme_icon_color: "Custom"
-                icon_color: "#2C4A44"
                 canvas.after:
-                    Color: 
-                        rgba: 46/255, 139/255, 87/255, 1  
+                    Color:
+                        rgba: 46/255, 139/255, 87/255, 1
                     Line:
-                        width: 2  
+                        width: 2
                         points: [self.x, self.y, self.right, self.y]
-                
+
                 MDTopAppBarLeadingButtonContainer:
                     MDActionTopAppBarButton:
                         icon: "arrow-left"
@@ -284,6 +374,9 @@ ScreenManager:
 
                 MDTopAppBarTitle:
                     text: "Configurações"
+                    text_color: ('#2C4A44')
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Bold.ttf'
 
             MDFloatLayout:
                 orientation: 'horizontal'
@@ -326,4 +419,110 @@ ScreenManager:
                         pos_hint: {"center_x": .5, "center_y": .5}
 
 
+<CadastroProdutoScreen>
+    name: 'Tela de Cadastro de Produtos'
+    MDScreen:
+        md_bg_color: (174/255,209/255,200/255,1)
+        MDBoxLayout:
+            md_bg_color: (179/255,209/255,200/255,1)
+            orientation: 'vertical'
+
+            MDTopAppBar:
+                type: 'small'
+                theme_bg_color: "Custom"
+                md_bg_color: "#AED1C8"
+                canvas.after:
+                    Color:
+                        rgba: 46/255, 139/255, 87/255, 1
+                    Line:
+                        width: 2
+                        points: [self.x, self.y, self.right, self.y]
+
+                MDTopAppBarLeadingButtonContainer:
+                    MDActionTopAppBarButton:
+                        icon: "arrow-left"
+                        on_release: root.manager.current='Tela de Estoque'
+
+                MDTopAppBarTitle:
+                    text: "Cadastro de Produtos"
+                    text_color: ('#2C4A44')
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Bold.ttf'
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                padding: [10,0,10,0]
+                md_bg_color: (174/255,209/255,200/255,1)
+
+
+<EntradaProdutoScreen>
+    name: 'Tela de Entrada de Produtos'
+    MDScreen:
+        md_bg_color: (174/255,209/255,200/255,1)
+        MDBoxLayout:
+            md_bg_color: (179/255,209/255,200/255,1)
+            orientation: 'vertical'
+
+            MDTopAppBar:
+                type: 'small'
+                theme_bg_color: "Custom"
+                md_bg_color: "#AED1C8"
+                canvas.after:
+                    Color:
+                        rgba: 46/255, 139/255, 87/255, 1
+                    Line:
+                        width: 2
+                        points: [self.x, self.y, self.right, self.y]
+
+                MDTopAppBarLeadingButtonContainer:
+                    MDActionTopAppBarButton:
+                        icon: "arrow-left"
+                        on_release: root.manager.current='Tela de Estoque'
+
+                MDTopAppBarTitle:
+                    text: "Entrada de Produtos"
+                    text_color: ('#2C4A44')
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Bold.ttf'
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                padding: [10,0,10,0]
+                md_bg_color: (174/255,209/255,200/255,1)
+
+
+<SaidaProdutoScreen>
+    name: 'Tela de Saida de Produtos'
+    MDScreen:
+        md_bg_color: (174/255,209/255,200/255,1)
+        MDBoxLayout:
+            md_bg_color: (179/255,209/255,200/255,1)
+            orientation: 'vertical'
+
+            MDTopAppBar:
+                type: 'small'
+                theme_bg_color: "Custom"
+                md_bg_color: "#AED1C8"
+                canvas.after:
+                    Color:
+                        rgba: 46/255, 139/255, 87/255, 1
+                    Line:
+                        width: 2
+                        points: [self.x, self.y, self.right, self.y]
+
+                MDTopAppBarLeadingButtonContainer:
+                    MDActionTopAppBarButton:
+                        icon: "arrow-left"
+                        on_release: root.manager.current='Tela de Estoque'
+
+                MDTopAppBarTitle:
+                    text: "Saída de Produtos"
+                    text_color: ('#2C4A44')
+                    theme_font_name: 'Custom'
+                    font_name: 'Fonts/Poppins-Bold.ttf'
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                padding: [10,0,10,0]
+                md_bg_color: (174/255,209/255,200/255,1)
 
