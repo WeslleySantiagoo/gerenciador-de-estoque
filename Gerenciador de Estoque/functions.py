@@ -50,33 +50,7 @@ def sign_up_db(email, password):
         return 'Email pequeno demais'
         
 
-def open_snackbar_sign_in(msg):
-    MDSnackbar(
-        MDSnackbarText(
-            text=msg,
-            pos_hint= {'center_x': 0.5,'center_y': 0.5},
-        ),
-        orientation="horizontal",
-        pos_hint={"center_x": 0.5, "center_y":0.06},
-        size_hint_x=0.9,
-        duration=1,
-    ).open()
-
-
-def open_snackbar_sign_up(msg):
-    MDSnackbar(
-        MDSnackbarText(
-            text=msg,
-            pos_hint= {'center_x': 0.5,'center_y': 0.5},
-        ),
-        orientation="horizontal",
-        pos_hint={"center_x": 0.5, "center_y":0.06},
-        size_hint_x=0.9,
-        duration=1,
-    ).open()
-        
-
-def open_snackbar_logout(msg):
+def open_snackbar(msg):
     MDSnackbar(
         MDSnackbarText(
             text=msg,
@@ -92,13 +66,23 @@ def open_snackbar_logout(msg):
 def get_db_estoque():
     lista = dict()
     estoque = db.child('Estoque').get()
-    for i in estoque.val():
-        description = {
-            'codigo': str(estoque.val()[i]['codigo']),
-            'qtEstoque': str(estoque.val()[i]['qtEstoque'])
-        }
-        lista[str(i)] = description
-    return lista
+    print(estoque)
+    try:
+        for i in estoque.val():
+            description = {
+                'codigo': str(estoque.val()[i]['codigo']),
+                'qtEstoque': str(estoque.val()[i]['qtEstoque'])
+            }
+            lista[str(i).lower().title()] = description
+        return lista
+    except:
+        return 'Estoque Vazio'
+
+
+def check_name_product(text_field,estoque):
+    produtos = estoque.keys()
+    if text_field.lower().title() in produtos:
+        return 'Erro'
 
 
 def graphic_generate():
@@ -106,30 +90,23 @@ def graphic_generate():
 
     sizes = [50, 50]
     colors = ['#2F47ED', '#ED3A3A']
+    fig, ax = plt.subplots(figsize=(5, 5), dpi=100)
 
-    # Criar figura e eixos
-    fig, ax = plt.subplots(figsize=(5, 5), dpi=100)  # 300x300px
-
-    # Criar o gráfico de pizza
     wedges, _ = ax.pie(
-        sizes, colors=colors,
+        sizes,
+        colors=colors,
         startangle=90,
         wedgeprops={'edgecolor': '#AED1C8'}
     )
 
-    # Criar o círculo central (anel)
     center_circle = plt.Circle((0, 0), 0.6, fc='#AED1C8', linewidth=2)
     ax.add_artist(center_circle)
 
-    # Remover margens
-    ax.set_xlim(-1, 1)  # Ajusta os limites para ficar bem próximo da borda
+    ax.set_xlim(-1, 1)
     ax.set_ylim(-1, 1)
-    plt.axis('off')  # Remove completamente os eixos
-
-    # Ajustar a posição do gráfico para ocupar 100% da imagem
+    plt.axis('off')
     plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
-    # Salvar imagem sem bordas extras
     plt.savefig(
         "Gerenciador de Estoque/Images/ring_graphic.png",
         dpi=100,
@@ -138,3 +115,13 @@ def graphic_generate():
         pad_inches=0
     )
 
+
+def add_new_product(name, code, qt, unit, report):
+    db.child('Estoque').update({
+        name.lower().title():{
+            'codigo': code,
+            'qtEstoque': qt,
+            'UnDeMed': unit,
+            'Motivo': report
+        }
+    })

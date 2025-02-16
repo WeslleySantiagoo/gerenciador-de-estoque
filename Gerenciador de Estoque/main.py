@@ -55,17 +55,18 @@ class LoginScreen(Screen):
 
 
     def sign_in_button(self, email, password):
-        sign_in = functions.sign_in_db(email, password)
+        sign_in = functions.sign_in_db(email.lower(), password)
         if sign_in == "Logado com sucesso":           #TEST MODE A
-            self.clear_fields()                       #TEST MODE A
             self.manager.current='Tela de Estoque'    #TEST MODE A
+            self.clear_fields()                       #TEST MODE A
         # self.manager.current='Tela de Estoque'      #TEST MODE B
-        return functions.open_snackbar_sign_in(sign_in)
+        # self.clear_fields()                         #TEST MODE B
+        return functions.open_snackbar(sign_in)
     
 
     def sign_up_button(self, email, password):
-        sign_up = functions.sign_up_db(email, password)
-        return functions.open_snackbar_sign_up(sign_up)
+        sign_up = functions.sign_up_db(email.lower(), password)
+        return functions.open_snackbar(sign_up)
 
 
 class EstoqueScreen(Screen):
@@ -76,23 +77,32 @@ class EstoqueScreen(Screen):
 
     def add_items(self, a=None):
         lista = self.ids.main_scroll
-        for k, v in functions.get_db_estoque().items():
-            item = MDListItem(radius=[10,10,10,10])
-            item.add_widget(MDListItemTrailingIcon(icon='hammer-screwdriver'))
-            item.add_widget(MDListItemHeadlineText(text=k))
-            item.add_widget(MDListItemSupportingText(text=f"Código: {v['codigo']}"))
-            item.add_widget(MDListItemTertiaryText(text=f"Quantidade em Estoque: {v['qtEstoque']}"))
-            lista.add_widget(item)
+        estoque = functions.get_db_estoque()
+        if estoque != 'Estoque Vazio':
+            estoque = estoque.items()
+            for k, v in estoque:
+                item = MDListItem(radius=[10,10,10,10])
+                item.add_widget(MDListItemTrailingIcon(icon='hammer-screwdriver'))
+                item.add_widget(MDListItemHeadlineText(text=k))
+                item.add_widget(MDListItemSupportingText(text=f"Código: {v['codigo']}"))
+                item.add_widget(MDListItemTertiaryText(text=f"Quantidade em Estoque: {v['qtEstoque']}"))
+                lista.add_widget(item)
+        else:
+            functions.open_snackbar('Estoque Vazio')
 
 
     def update_list_estoque(self, a=None):
-        lista = lista = self.ids.main_scroll
-        lista.clear_widgets()
-        self.add_items()
+        try:
+            lista = self.ids.main_scroll
+            lista.clear_widgets()
+            self.add_items()
+        except:
+            pass
 
 
 class AnaliseScreen(Screen):
-    pass
+    def shortly(self):
+        functions.open_snackbar('EM BREVE - 3a V.A')
 
 
 class MovimentacoesScreen(Screen):
@@ -101,7 +111,7 @@ class MovimentacoesScreen(Screen):
 
 class ConfiguracoesScreen(Screen):
     def logout(self):
-        functions.open_snackbar_logout('Seção encerrada')
+        functions.open_snackbar('Seção encerrada')
         Clock.schedule_once(self.exit_sreen, 0.5)
 
 
@@ -115,8 +125,81 @@ class ConfiguracoesScreen(Screen):
 
 
 class CadastroProdutoScreen(Screen):
-    pass
+    def on_enter(self):
+        try:
+            self.estoque = functions.get_db_estoque()
+            print(self.estoque)             #VIEW MODE
+            print(self.estoque.keys())      #VIEW MODE
+        except:
+            pass
+        
 
+    def existing_name_check(self, text_field):
+        try:
+            if functions.check_name_product((text_field.text).title(), self.estoque) == 'Erro':
+                text_field.error = True
+                functions.open_snackbar('O produto já existe')
+                return 'ERRO'
+        except:
+            pass
+
+
+    def save_and_continue(self, name, code, qt, unit, report):
+        if name != '':
+            if code != '':
+                if qt != '':
+                    if unit != '':
+                        if report != '':
+                            if self.ids.product_name_input.error != True:
+                                functions.add_new_product(name, code, qt, unit, report)
+                                functions.open_snackbar('Produto Adicionado com sucesso')
+                                self.ids.product_name_input.text = ''
+                                self.ids.product_code_input.text = ''
+                                self.ids.product_qt_input.text = ''
+                                self.ids.product_unit_input.text = ''
+                                self.ids.product_report_input.text = ''
+                            else:
+                                functions.open_snackbar('O produto já existe')
+                        else:
+                            functions.open_snackbar('Insira o motivo')
+                    else:
+                        functions.open_snackbar('Insira a unidade')
+                else:
+                    functions.open_snackbar('Insira a quantidade')
+            else:
+                functions.open_snackbar('Insira o código')
+        else:
+            functions.open_snackbar('Insira o nome')
+
+
+    def save_and_exit(self, name, code, qt, unit, report):
+        if name != '':
+            if code != '':
+                if qt != '':
+                    if unit != '':
+                        if report != '':
+                            if self.ids.product_name_input.error != True:
+                                functions.add_new_product(name, code, qt, unit, report)
+                                functions.open_snackbar('Produto Adicionado com sucesso')
+                                self.ids.product_name_input.text = ''
+                                self.ids.product_code_input.text = ''
+                                self.ids.product_qt_input.text = ''
+                                self.ids.product_unit_input.text = ''
+                                self.ids.product_report_input.text = ''
+                                self.manager.current = 'Tela de Estoque'
+                            else:
+                                functions.open_snackbar('O produto já existe')
+                        else:
+                            functions.open_snackbar('Insira o motivo')
+                    else:
+                        functions.open_snackbar('Insira a unidade')
+                else:
+                    functions.open_snackbar('Insira a quantidade')
+            else:
+                functions.open_snackbar('Insira o código')
+        else:
+            functions.open_snackbar('Insira o nome')
+        
 
 class EntradaProdutoScreen(Screen):
     pass

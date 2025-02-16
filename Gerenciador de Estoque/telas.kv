@@ -20,13 +20,13 @@ ScreenManager:
                 source:'Images/homem.png'
                 size_hint: None, None
                 size: ('150dp','150dp')
-                pos_hint: {'center_x': 0.5,'center_y': 0.7}
+                pos_hint: {'center_x': 0.5,'center_y': 0.75}
 
 
             MDTextField:
                 id: email_input
                 mode: 'outlined'
-                pos_hint: {"center_x": 0.5, "center_y": 0.50}
+                pos_hint: {"center_x": 0.5, "center_y": 0.52}
                 size_hint: 0.7, None
                 theme_line_color: "Custom"
                 line_color_normal: (209/255, 209/255, 209/255, 1)
@@ -299,7 +299,7 @@ ScreenManager:
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                         theme_bg_color: 'Custom'
                         md_bg_color: (46/255, 139/255, 87/255, 1)
-
+                        on_release: root.shortly()
 
                         MDButtonText:
                             theme_font_name: 'Custom'
@@ -418,6 +418,12 @@ ScreenManager:
                         text: "Fechar App"
                         pos_hint: {"center_x": .5, "center_y": .5}
 
+                FitImage:
+                    source: 'Images/object.png'
+                    size_hint: None, None
+                    size: '360dp','174dp'
+                    pos_hint: {'center_x': 0.5,'center_y': 0.15}
+
 
 <CadastroProdutoScreen>
     name: 'Tela de Cadastro de Produtos'
@@ -450,9 +456,125 @@ ScreenManager:
                     font_name: 'Fonts/Poppins-Bold.ttf'
 
             MDBoxLayout:
-                orientation: 'horizontal'
-                padding: [10,0,10,0]
+                orientation: 'vertical'
+                spacing: '15dp'
+                padding: ('10dp', '30dp', '10dp', '10dp')
+                size_hint_y: 40
                 md_bg_color: (174/255,209/255,200/255,1)
+
+                MDTextField:
+                    id: product_name_input
+                    mode: 'outlined'
+                    pos_hint: {'center_x': 0.5,'center_y': 0.0}
+                    size_hint: 0.9, None
+                    theme_line_color: "Custom"
+                    line_color_normal: (209/255, 209/255, 209/255, 1)
+                    padding: [0,10,0,10]
+                    on_text: root.existing_name_check(self)
+
+                    MDTextFieldHintText:
+                        text: "Nome"
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Regular.ttf'
+                MDTextField:
+                    id: product_code_input
+                    mode: 'outlined'
+                    pos_hint: {'center_x': 0.5,'center_y': 0.0}
+                    size_hint: 0.9, None
+                    theme_line_color: "Custom"
+                    line_color_normal: (209/255, 209/255, 209/255, 1)
+                    padding: [0,10,0,10]
+                    on_text: root.existing_name_check(self)
+
+                    MDTextFieldHintText:
+                        text: "Código"
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Regular.ttf'
+                MDTextField:
+                    id: product_qt_input
+                    mode: 'outlined'
+                    pos_hint: {'center_x': 0.5,'center_y': 0.0}
+                    size_hint: 0.9, None
+                    theme_line_color: "Custom"
+                    line_color_normal: (209/255, 209/255, 209/255, 1)
+                    padding: [0,10,0,10]
+                    on_text: root.existing_name_check(self)
+
+                    MDTextFieldHintText:
+                        text: "Quantidade em Estoque"
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Regular.ttf'
+
+                MDTextField:
+                    id: product_unit_input
+                    mode: 'outlined'
+                    pos_hint: {'center_x': 0.5,'center_y': 0.0}
+                    size_hint: 0.9, None
+                    theme_line_color: "Custom"
+                    line_color_normal: (209/255, 209/255, 209/255, 1)
+                    padding: [0,10,0,10]
+                    on_text: root.existing_name_check(self)
+
+                    MDTextFieldHintText:
+                        text: "Unidade de Medida"
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Regular.ttf'
+
+                MDTextField:
+                    id: product_report_input
+                    mode: 'outlined'
+                    pos_hint: {'center_x': 0.5,'center_y': 0.0}
+                    size_hint: 0.9, None
+                    theme_line_color: "Custom"
+                    line_color_normal: (209/255, 209/255, 209/255, 1)
+                    padding: [0,10,0,10]
+                    on_text: root.existing_name_check(self)
+
+                    MDTextFieldHintText:
+                        text: "Motivo"
+                        halign: 'center'
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Regular.ttf'
+            MDFloatLayout:
+                size_hint_y: 24
+                md_bg_color: (174/255,209/255,200/255,1)
+
+                MDButton:
+                    id: 'entrar_button'
+                    style: "filled"
+                    theme_width: "Custom"
+                    height: "40dp"
+                    size_hint_x: .8
+                    pos_hint: {'center_x': 0.5,'center_y': 0.43}
+                    theme_bg_color: 'Custom'
+                    md_bg_color: (81/255, 115/255, 110/255, 1)
+                    on_release: root.save_and_continue(product_name_input.text, product_code_input.text, product_qt_input.text, product_unit_input.text, product_report_input.text)
+
+                    MDButtonText:
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Bold.ttf'
+                        text_color: (1,1,1,1)
+                        text: "Salvar e continuar na página"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    id: 'entrar_button'
+                    style: "filled"
+                    theme_width: "Custom"
+                    height: "40dp"
+                    size_hint_x: .8
+                    pos_hint: {'center_x': 0.5,'center_y': 0.2}
+                    theme_bg_color: 'Custom'
+                    md_bg_color: (46/255, 139/255, 87/255, 1)
+                    on_release: root.save_and_exit(product_name_input.text, product_code_input.text, product_qt_input.text, product_unit_input.text, product_report_input.text)
+
+                    MDButtonText:
+                        theme_font_name: 'Custom'
+                        font_name: 'Fonts/Poppins-Bold.ttf'
+                        text_color: (1,1,1,1)
+                        text: "Salvar e sair da página"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
 
 
 <EntradaProdutoScreen>
@@ -525,4 +647,3 @@ ScreenManager:
                 orientation: 'horizontal'
                 padding: [10,0,10,0]
                 md_bg_color: (174/255,209/255,200/255,1)
-
