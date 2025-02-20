@@ -1,4 +1,5 @@
 from kivymd.app import MDApp
+from kivy.uix.label import Label
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.filechooser import Screen
@@ -48,7 +49,7 @@ class LoginScreen(Screen):
         if len(password) < 6:
             return True
         return False
-        
+
 
     def verify_password(self, password_field):
         password_field.error = self.invalid_password(password_field.text) != False
@@ -62,7 +63,7 @@ class LoginScreen(Screen):
         # self.manager.current='Tela de Estoque'      #TEST MODE B
         # self.clear_fields()                         #TEST MODE B
         return functions.open_snackbar(sign_in)
-    
+
 
     def sign_up_button(self, email, password):
         sign_up = functions.sign_up_db(email.lower(), password)
@@ -132,7 +133,7 @@ class CadastroProdutoScreen(Screen):
             print(self.estoque.keys())      #VIEW MODE
         except:
             pass
-        
+
 
     def existing_name_check(self, text_field):
         try:
@@ -199,10 +200,83 @@ class CadastroProdutoScreen(Screen):
                 functions.open_snackbar('Insira o código')
         else:
             functions.open_snackbar('Insira o nome')
-        
+
 
 class EntradaProdutoScreen(Screen):
-    pass
+    def on_enter(self):
+        self.estoque = functions.get_db_estoque()
+        self.produtos = self.estoque.keys()
+        self.text = self.ids.product_name_input_enter.text
+        self.ids.add_enter_list.disabled = True
+        self.ids.product_name_input_enter.bind(focus=self.on_focus)
+        self.list_enter = {}
+
+
+    def on_focus(self, a, value):
+        if not value:
+            self.ids.suggestion_list.clear_widgets()
+            self.ids.product_qt_input_enter.disabled = False
+        else:
+            self.ids.product_qt_input_enter.disabled = True
+
+    
+    def verify_name(self, a=None):
+        if self.text in self.produtos:
+            self.ids.suggestion_list.clear_widgets()
+            self.ids.add_enter_list.disabled = False
+        else:
+            self.ids.add_enter_list.disabled = True
+
+
+    def filter_suggestions(self, text):
+        self.text = text
+        suggestion_list = self.ids.suggestion_list
+        suggestion_list.clear_widgets()
+        self.verify_name()
+        if text:
+            filtered_items = [item for item in self.produtos if text.lower() in item.lower()]
+
+            for item in filtered_items:
+                label = Label(text=item, size_hint_y=None, height=40, color = [0,0,0,1])
+                label.bind(on_touch_down= self.select_suggestion)
+                suggestion_list.add_widget(label)
+        
+
+
+    def select_suggestion(self, instance, click):
+        if instance.collide_point(*click.pos):
+            self.ids.product_name_input_enter.text = instance.text
+            self.ids.suggestion_list.clear_widgets()
+
+
+    def add_list_enter(self, name, qt_entering):
+        if name != '':
+            if self.ids.product_name_input_enter.text in self.list_enter.keys():
+                functions.open_snackbar('Produto ja adicionado')
+            else:
+                qt = int(self.estoque[self.text]['qtEstoque'])
+                new_qt = qt + int(qt_entering)
+                lista = self.ids.main_scroll_enter
+                item = MDListItem(radius=[10,10,10,10])
+                item.add_widget(MDListItemTrailingIcon(icon='arrow-up-drop-circle'))
+                item.add_widget(MDListItemHeadlineText(text=name))
+                item.add_widget(MDListItemSupportingText(text=f"Quantidade antes: {qt}"))
+                item.add_widget(MDListItemTertiaryText(text=f"Quantidade após: {new_qt}"))
+                lista.add_widget(item)
+
+                self.list_enter[name]= int(new_qt)
+
+                self.ids.product_name_input_enter.text = ''
+                self.ids.product_qt_input_enter.text = ''
+
+
+    def add_product_db(self):
+        if len(self.list_enter.keys()) == 0:
+            functions.open_snackbar('Adicione algum item primeiro')
+        else:
+            functions.enter_product(self.list_enter)
+            self.ids.main_scroll_enter.clear_widgets()
+            self.manager.current = 'Tela de Estoque'
 
 
 class SaidaProdutoScreen(Screen):
@@ -216,8 +290,6 @@ class MainApp(MDApp):
         self.theme_cls.primary_palette = 'Green'
         self.theme_cls.theme_style = "Light"
         return Builder.load_file('telas.kv')
-    
-        
 
 
 MainApp().run()

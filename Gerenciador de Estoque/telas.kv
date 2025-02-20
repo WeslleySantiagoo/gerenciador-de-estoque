@@ -100,10 +100,10 @@ ScreenManager:
                     text_color: (1,1,1,1)
                     text: "Registrar"
                     pos_hint: {"center_x": .5, "center_y": .5}
-                
-            
 
-                    
+
+
+
 
 <EstoqueScreen>
     name: 'Tela de Estoque'
@@ -123,10 +123,10 @@ ScreenManager:
                 theme_icon_color: "Custom"
                 icon_color: "#2C4A44"
                 canvas.after:
-                    Color: 
-                        rgba: 46/255, 139/255, 87/255, 1  
+                    Color:
+                        rgba: 46/255, 139/255, 87/255, 1
                     Line:
-                        width: 2  
+                        width: 2
                         points: [self.x, self.y, self.right, self.y]
 
                 MDTopAppBarTitle:
@@ -253,7 +253,7 @@ ScreenManager:
                     size_hint: (None, None)
                     size: '300dp','300dp'
                     pos_hint: {'center_x': 0.5,'center_y': 0.5}
-                    
+
                 MDBoxLayout:
                     orientation: 'horizontal'
                     size_hint_y: 0.3
@@ -262,7 +262,7 @@ ScreenManager:
                             icon: 'arrow-up-drop-circle'
                             icon_color: '#2F47ED'
                             pos_hint: {'center_x': 0.8,'center_y': 0.54}
-                            
+
 
                     MDLabel:
                         text: "Entrada"
@@ -307,8 +307,8 @@ ScreenManager:
                             text_color: (1,1,1,1)
                             text: "Gerar PDF"
                             pos_hint: {"center_x": .5, "center_y": .5}
-        
-                    
+
+
 
 
 
@@ -608,9 +608,107 @@ ScreenManager:
                     font_name: 'Fonts/Poppins-Bold.ttf'
 
             MDBoxLayout:
-                orientation: 'horizontal'
-                padding: [10,0,10,0]
+                orientation: 'vertical'
+                padding: [10,10,10,0]
                 md_bg_color: (174/255,209/255,200/255,1)
+                MDFloatLayout:
+                    id: layout
+                    size_hint_y: 0.65
+                    MDTextField:
+                        id: product_name_input_enter
+                        mode: 'outlined'
+                        pos_hint: {'center_x': 0.5,'center_y': 0.8}
+                        size_hint: 0.9, None
+                        theme_line_color: "Custom"
+                        line_color_normal: (209/255, 209/255, 209/255, 1)
+                        padding: [0,10,0,10]
+                        on_text: root.filter_suggestions(self.text)
+                        
+
+                        MDTextFieldHintText:
+                            text: "Nome do Produto"
+                            theme_font_name: 'Custom'
+                            font_name: 'Fonts/Poppins-Regular.ttf'
+
+                    MDTextField:
+                        id: product_qt_input_enter
+                        mode: 'outlined'
+                        pos_hint: {'center_x': 0.5,'center_y': 0.45}
+                        size_hint: 0.9, None
+                        theme_line_color: "Custom"
+                        line_color_normal: (209/255, 209/255, 209/255, 1)
+                        padding: [0,10,0,10]
+    
+                        on_focus: root.verify_name(self.focus)
+
+                        MDTextFieldHintText:
+                            text: "Quantidade de entrada"
+                            theme_font_name: 'Custom'
+                            font_name: 'Fonts/Poppins-Regular.ttf'
+
+                            
+
+
+                    MDButton:
+                        id: add_enter_list
+                        style: "filled"
+                        theme_width: "Custom"
+                        height: "40dp"
+                        size_hint_x: .8
+                        pos_hint: {'center_x': 0.5,'center_y': 0.13}
+                        theme_bg_color: 'Custom'
+                        md_bg_color: (46/255, 139/255, 87/255, 1)
+                        on_release: root.add_list_enter(product_name_input_enter.text, product_qt_input_enter.text)
+
+                        MDButtonText:
+                            theme_font_name: 'Custom'
+                            font_name: 'Fonts/Poppins-Bold.ttf'
+                            text_color: (1,1,1,1)
+                            text: "Adicionar a lista de entrada"
+                            pos_hint: {"center_x": .5, "center_y": .5}
+
+
+
+                    MDScrollView:
+                        id: grid
+                        pos_hint: {'center_x': 0.5,'center_y': 0.23}
+                        size_hint_y: None
+                        height: "150dp"
+                        MDGridLayout:
+                            radius: [10,10,10,10]
+                            id: suggestion_list
+                            md_bg_color: [0.7,0.7,0.7,1]
+                            cols: 1
+                            size_hint_y: None
+                            height: self.minimum_height
+
+                MDScrollView:
+                    MDList:
+                        id: main_scroll_enter
+                        spacing: '10dp'
+
+
+                MDBoxLayout:
+                    size_hint_y: 0.2
+                    MDButton:
+                        id: continue
+                        style: "filled"
+                        theme_width: "Custom"
+                        height: "40dp"
+                        size_hint_x: .8
+                        pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                        theme_bg_color: 'Custom'
+                        md_bg_color: (46/255, 139/255, 87/255, 1)
+                        on_release: root.add_product_db()
+
+                        MDButtonText:
+                            theme_font_name: 'Custom'
+                            font_name: 'Fonts/Poppins-Bold.ttf'
+                            text_color: (1,1,1,1)
+                            text: "Continue para confirmação"
+                            pos_hint: {"center_x": .5, "center_y": .5}
+
+
 
 
 <SaidaProdutoScreen>

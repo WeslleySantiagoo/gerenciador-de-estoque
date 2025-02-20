@@ -125,3 +125,10 @@ def add_new_product(name, code, qt, unit, report):
             'Motivo': report
         }
     })
+
+
+def enter_product(dict_p):
+    for k, v in dict_p.items():
+        db.child('Estoque').child(k).update({'qtEstoque': v})
+    open_snackbar('Success')
+
