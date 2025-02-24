@@ -528,7 +528,6 @@ ScreenManager:
                     theme_line_color: "Custom"
                     line_color_normal: (209/255, 209/255, 209/255, 1)
                     padding: [0,10,0,10]
-                    on_text: root.existing_name_check(self)
 
                     MDTextFieldHintText:
                         text: "Motivo"
@@ -599,9 +598,10 @@ ScreenManager:
                 MDTopAppBarLeadingButtonContainer:
                     MDActionTopAppBarButton:
                         icon: "arrow-left"
-                        on_release: root.manager.current='Tela de Estoque'
+                        on_release: root.back_button()
 
                 MDTopAppBarTitle:
+                    id: title
                     text: "Entrada de Produtos"
                     text_color: ('#2C4A44')
                     theme_font_name: 'Custom'
@@ -647,8 +647,6 @@ ScreenManager:
                             font_name: 'Fonts/Poppins-Regular.ttf'
 
                             
-
-
                     MDButton:
                         id: add_enter_list
                         style: "filled"
@@ -666,7 +664,6 @@ ScreenManager:
                             text_color: (1,1,1,1)
                             text: "Adicionar a lista de entrada"
                             pos_hint: {"center_x": .5, "center_y": .5}
-
 
 
                     MDScrollView:
@@ -709,8 +706,6 @@ ScreenManager:
                             pos_hint: {"center_x": .5, "center_y": .5}
 
 
-
-
 <SaidaProdutoScreen>
     name: 'Tela de Saida de Produtos'
     MDScreen:
@@ -733,7 +728,7 @@ ScreenManager:
                 MDTopAppBarLeadingButtonContainer:
                     MDActionTopAppBarButton:
                         icon: "arrow-left"
-                        on_release: root.manager.current='Tela de Estoque'
+                        on_release: root.back_button()
 
                 MDTopAppBarTitle:
                     text: "Saída de Produtos"
@@ -742,6 +737,99 @@ ScreenManager:
                     font_name: 'Fonts/Poppins-Bold.ttf'
 
             MDBoxLayout:
-                orientation: 'horizontal'
-                padding: [10,0,10,0]
+                orientation: 'vertical'
+                padding: [10,10,10,0]
                 md_bg_color: (174/255,209/255,200/255,1)
+                MDFloatLayout:
+                    id: layout
+                    size_hint_y: 0.65
+                    MDTextField:
+                        id: product_name_input_exit
+                        mode: 'outlined'
+                        pos_hint: {'center_x': 0.5,'center_y': 0.8}
+                        size_hint: 0.9, None
+                        theme_line_color: "Custom"
+                        line_color_normal: (209/255, 209/255, 209/255, 1)
+                        padding: [0,10,0,10]
+                        on_text: root.filter_suggestions(self.text)
+                        
+
+                        MDTextFieldHintText:
+                            text: "Nome do Produto"
+                            theme_font_name: 'Custom'
+                            font_name: 'Fonts/Poppins-Regular.ttf'
+
+                    MDTextField:
+                        id: product_qt_input_exit
+                        mode: 'outlined'
+                        pos_hint: {'center_x': 0.5,'center_y': 0.45}
+                        size_hint: 0.9, None
+                        theme_line_color: "Custom"
+                        line_color_normal: (209/255, 209/255, 209/255, 1)
+                        padding: [0,10,0,10]
+    
+                        on_focus: root.verify_name(self.focus)
+
+                        MDTextFieldHintText:
+                            text: "Quantidade de entrada"
+                            theme_font_name: 'Custom'
+                            font_name: 'Fonts/Poppins-Regular.ttf'
+
+
+                    MDButton:
+                        id: add_exit_list
+                        style: "filled"
+                        theme_width: "Custom"
+                        height: "40dp"
+                        size_hint_x: .8
+                        pos_hint: {'center_x': 0.5,'center_y': 0.13}
+                        theme_bg_color: 'Custom'
+                        md_bg_color: (46/255, 139/255, 87/255, 1)
+                        on_release: root.add_list_exit(product_name_input_exit.text, product_qt_input_exit.text)
+
+                        MDButtonText:
+                            theme_font_name: 'Custom'
+                            font_name: 'Fonts/Poppins-Bold.ttf'
+                            text_color: (1,1,1,1)
+                            text: "Adicionar a lista de entrada"
+                            pos_hint: {"center_x": .5, "center_y": .5}
+
+
+                    MDScrollView:
+                        id: grid
+                        pos_hint: {'center_x': 0.5,'center_y': 0.23}
+                        size_hint_y: None
+                        height: "150dp"
+                        MDGridLayout:
+                            radius: [10,10,10,10]
+                            id: suggestion_list
+                            md_bg_color: [0.7,0.7,0.7,1]
+                            cols: 1
+                            size_hint_y: None
+                            height: self.minimum_height
+
+                MDScrollView:
+                    MDList:
+                        id: main_scroll_exit
+                        spacing: '10dp'
+
+
+                MDBoxLayout:
+                    size_hint_y: 0.2
+                    MDButton:
+                        id: continue
+                        style: "filled"
+                        theme_width: "Custom"
+                        height: "40dp"
+                        size_hint_x: .8
+                        pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                        theme_bg_color: 'Custom'
+                        md_bg_color: (46/255, 139/255, 87/255, 1)
+                        on_release: root.remove_product_db()
+
+                        MDButtonText:
+                            theme_font_name: 'Custom'
+                            font_name: 'Fonts/Poppins-Bold.ttf'
+                            text_color: (1,1,1,1)
+                            text: "Continue para confirmação"
+                            pos_hint: {"center_x": .5, "center_y": .5}

@@ -13,7 +13,6 @@ from kivymd.uix.list import (
 )
 
 
-
 import functions
 import pyrebase
 
@@ -57,11 +56,11 @@ class LoginScreen(Screen):
 
     def sign_in_button(self, email, password):
         sign_in = functions.sign_in_db(email.lower(), password)
-        if sign_in == "Logado com sucesso":           #TEST MODE A
-            self.manager.current='Tela de Estoque'    #TEST MODE A
-            self.clear_fields()                       #TEST MODE A
-        # self.manager.current='Tela de Estoque'      #TEST MODE B
-        # self.clear_fields()                         #TEST MODE B
+        # if sign_in == "Logado com sucesso":           #TEST MODE A
+        #     self.manager.current='Tela de Estoque'    #TEST MODE A
+        #     self.clear_fields()                       #TEST MODE A
+        self.manager.current='Tela de Estoque'      #TEST MODE B
+        self.clear_fields()                         #TEST MODE B
         return functions.open_snackbar(sign_in)
 
 
@@ -146,60 +145,11 @@ class CadastroProdutoScreen(Screen):
 
 
     def save_and_continue(self, name, code, qt, unit, report):
-        if name != '':
-            if code != '':
-                if qt != '':
-                    if unit != '':
-                        if report != '':
-                            if self.ids.product_name_input.error != True:
-                                functions.add_new_product(name, code, qt, unit, report)
-                                functions.open_snackbar('Produto Adicionado com sucesso')
-                                self.ids.product_name_input.text = ''
-                                self.ids.product_code_input.text = ''
-                                self.ids.product_qt_input.text = ''
-                                self.ids.product_unit_input.text = ''
-                                self.ids.product_report_input.text = ''
-                            else:
-                                functions.open_snackbar('O produto já existe')
-                        else:
-                            functions.open_snackbar('Insira o motivo')
-                    else:
-                        functions.open_snackbar('Insira a unidade')
-                else:
-                    functions.open_snackbar('Insira a quantidade')
-            else:
-                functions.open_snackbar('Insira o código')
-        else:
-            functions.open_snackbar('Insira o nome')
+        functions.save_and_continue(self, name, code, qt, unit, report)
 
 
     def save_and_exit(self, name, code, qt, unit, report):
-        if name != '':
-            if code != '':
-                if qt != '':
-                    if unit != '':
-                        if report != '':
-                            if self.ids.product_name_input.error != True:
-                                functions.add_new_product(name, code, qt, unit, report)
-                                functions.open_snackbar('Produto Adicionado com sucesso')
-                                self.ids.product_name_input.text = ''
-                                self.ids.product_code_input.text = ''
-                                self.ids.product_qt_input.text = ''
-                                self.ids.product_unit_input.text = ''
-                                self.ids.product_report_input.text = ''
-                                self.manager.current = 'Tela de Estoque'
-                            else:
-                                functions.open_snackbar('O produto já existe')
-                        else:
-                            functions.open_snackbar('Insira o motivo')
-                    else:
-                        functions.open_snackbar('Insira a unidade')
-                else:
-                    functions.open_snackbar('Insira a quantidade')
-            else:
-                functions.open_snackbar('Insira o código')
-        else:
-            functions.open_snackbar('Insira o nome')
+        functions.save_and_exit(self, name, code, qt, unit, report)
 
 
 class EntradaProdutoScreen(Screen):
@@ -242,7 +192,6 @@ class EntradaProdutoScreen(Screen):
                 suggestion_list.add_widget(label)
         
 
-
     def select_suggestion(self, instance, click):
         if instance.collide_point(*click.pos):
             self.ids.product_name_input_enter.text = instance.text
@@ -252,37 +201,146 @@ class EntradaProdutoScreen(Screen):
     def add_list_enter(self, name, qt_entering):
         if name != '':
             if self.ids.product_name_input_enter.text in self.list_enter.keys():
-                functions.open_snackbar('Produto ja adicionado')
+                functions.open_snackbar('Produto ja adicionado a lista')
             else:
                 qt = int(self.estoque[self.text]['qtEstoque'])
-                new_qt = qt + int(qt_entering)
-                lista = self.ids.main_scroll_enter
-                item = MDListItem(radius=[10,10,10,10])
-                item.add_widget(MDListItemTrailingIcon(icon='arrow-up-drop-circle'))
-                item.add_widget(MDListItemHeadlineText(text=name))
-                item.add_widget(MDListItemSupportingText(text=f"Quantidade antes: {qt}"))
-                item.add_widget(MDListItemTertiaryText(text=f"Quantidade após: {new_qt}"))
-                lista.add_widget(item)
+                try:
+                    new_qt = qt + int(qt_entering)
+                    lista = self.ids.main_scroll_enter
+                    item = MDListItem(radius=[10,10,10,10])
+                    item.add_widget(MDListItemTrailingIcon(icon='arrow-up-drop-circle'))
+                    item.add_widget(MDListItemHeadlineText(text=name))
+                    item.add_widget(MDListItemSupportingText(text=f"Quantidade antes: {qt}"))
+                    item.add_widget(MDListItemTertiaryText(text=f"Quantidade após: {new_qt}"))
+                    lista.add_widget(item)
 
-                self.list_enter[name]= int(new_qt)
+                    self.list_enter[name]= [qt, int(new_qt)]
 
-                self.ids.product_name_input_enter.text = ''
-                self.ids.product_qt_input_enter.text = ''
+                    self.ids.product_name_input_enter.text = ''
+                    self.ids.product_qt_input_enter.text = ''
+                except:
+                    functions.open_snackbar('Insira uma quantidade válida')
 
 
     def add_product_db(self):
-        if len(self.list_enter.keys()) == 0:
-            functions.open_snackbar('Adicione algum item primeiro')
-        else:
-            functions.enter_product(self.list_enter)
-            self.ids.main_scroll_enter.clear_widgets()
-            self.manager.current = 'Tela de Estoque'
+        def continuar(motivo):
+            if not motivo.strip():
+                functions.open_snackbar('Digite um motivo antes de continuar')
+                return
+        
+            if len(self.list_enter.keys()) == 0:
+                functions.open_snackbar('Adicione algum item na lista primeiro')
+            else:
+                functions.enter_product(self.list_enter, motivo)
+                self.ids.main_scroll_enter.clear_widgets()
+                self.manager.current = 'Tela de Estoque'
+        functions.open_dialog(continuar, 'enter')
+    
+
+    def back_button(self):
+        self.manager.current='Tela de Estoque'
+        self.ids.main_scroll_enter.clear_widgets()
 
 
 class SaidaProdutoScreen(Screen):
-    pass
+    def on_enter(self):
+        self.estoque = functions.get_db_estoque()
+        self.produtos = self.estoque.keys()
+        self.text = self.ids.product_name_input_exit.text
+        self.ids.add_exit_list.disabled = True
+        self.ids.product_name_input_exit.bind(focus=self.on_focus)
+        self.ids.product_qt_input_exit.disabled = True
+        self.list_exit = {}
 
 
+    def on_focus(self, a, value):
+        if not value:
+            self.ids.suggestion_list.clear_widgets()
+            self.ids.product_qt_input_exit.disabled = False
+        else:
+            self.ids.product_qt_input_exit.disabled = True
+
+    
+    def verify_name(self, a=None):
+        if self.text in self.produtos:
+            self.ids.suggestion_list.clear_widgets()
+            self.ids.add_exit_list.disabled = False
+        else:
+            self.ids.add_exit_list.disabled = True
+
+
+    def filter_suggestions(self, text):
+        self.text = text
+        suggestion_list = self.ids.suggestion_list
+        suggestion_list.clear_widgets()
+        self.verify_name()
+        if text:
+            filtered_items = [item for item in self.produtos if text.lower() in item.lower()]
+
+            for item in filtered_items:
+                label = Label(text=item, size_hint_y=None, height=40, color = [0,0,0,1])
+                label.bind(on_touch_down= self.select_suggestion)
+                suggestion_list.add_widget(label)
+        
+
+    def select_suggestion(self, instance, click):
+        if instance.collide_point(*click.pos):
+            self.ids.product_name_input_exit.text = instance.text
+            self.ids.suggestion_list.clear_widgets()
+
+
+    def add_list_exit(self, name, qt_exiting):
+        if name != '':
+            if self.ids.product_name_input_exit.text in self.list_exit.keys():
+                functions.open_snackbar('Produto ja adicionado a lista')
+
+            else:
+                qt = int(self.estoque[self.text]['qtEstoque'])
+                try:
+                    qt_exiting = int(qt_exiting)
+                    if qt_exiting <= 0:
+                        functions.open_snackbar('Insira uma quantidade válida')
+                    elif qt_exiting > qt:
+                            functions.open_snackbar(f'Você tem apenas {qt} no estoque')
+                    else:
+                        new_qt = qt - int(qt_exiting)
+                        lista = self.ids.main_scroll_exit
+                        item = MDListItem(radius=[10,10,10,10])
+                        item.add_widget(MDListItemTrailingIcon(icon='arrow-up-drop-circle'))
+                        item.add_widget(MDListItemHeadlineText(text=name))
+                        item.add_widget(MDListItemSupportingText(text=f"Quantidade antes: {qt}"))
+                        item.add_widget(MDListItemTertiaryText(text=f"Quantidade após: {new_qt}"))
+                        lista.add_widget(item)
+
+                        self.list_exit[name]= [qt, int(new_qt)]
+
+                        self.ids.product_name_input_exit.text = ''
+                        self.ids.product_qt_input_exit.text = ''
+                except:
+                    functions.open_snackbar('Insira uma quantidade válida')
+        print(self.list_exit)
+
+    def remove_product_db(self):
+        def continuar(motivo):
+            if not motivo.strip():
+                functions.open_snackbar('Digite um motivo antes de continuar')
+                return
+            
+            if len(self.list_exit.keys()) == 0:
+                functions.open_snackbar('Adicione algum item na lista primeiro')
+            else:
+                functions.remove_product(self.list_exit, motivo)
+                self.ids.main_scroll_exit.clear_widgets()
+                self.manager.current = 'Tela de Estoque'
+
+        functions.open_dialog(continuar, 'exit')
+        
+
+    def back_button(self):
+        self.manager.current='Tela de Estoque'
+        self.ids.main_scroll_exit.clear_widgets()
+
+    
 class MainApp(MDApp):
     def build(self):
         Window.size = (360, 640)
