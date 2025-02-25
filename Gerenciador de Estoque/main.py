@@ -56,11 +56,9 @@ class LoginScreen(Screen):
 
     def sign_in_button(self, email, password):
         sign_in = functions.sign_in_db(email.lower().strip(), password)
-        if sign_in == "Logado com sucesso":           #TEST MODE A
-            self.manager.current='Tela de Estoque'    #TEST MODE A
-            self.clear_fields()                       #TEST MODE A
-        # self.manager.current='Tela de Estoque'      #TEST MODE B
-        # self.clear_fields()                         #TEST MODE B
+        if sign_in == "Logado com sucesso":
+            self.manager.current='Tela de Estoque'
+            self.clear_fields()                     
         return functions.open_snackbar(sign_in)
 
 
