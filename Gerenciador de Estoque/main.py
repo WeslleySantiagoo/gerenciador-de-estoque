@@ -40,8 +40,8 @@ class LoginScreen(Screen):
 
 
     def verify_dominion_email(self, email_field):
-            if email_field.text != "":
-                email_field.error = not email_field.text.endswith('@ufrpe.br')
+            if email_field.text.strip().lower() != "":
+                email_field.error = not email_field.text.strip().lower().endswith('@ufrpe.br')
 
 
     def invalid_password(self, password):
@@ -55,40 +55,36 @@ class LoginScreen(Screen):
 
 
     def sign_in_button(self, email, password):
-        sign_in = functions.sign_in_db(email.lower(), password)
-        # if sign_in == "Logado com sucesso":           #TEST MODE A
-        #     self.manager.current='Tela de Estoque'    #TEST MODE A
-        #     self.clear_fields()                       #TEST MODE A
-        self.manager.current='Tela de Estoque'      #TEST MODE B
-        self.clear_fields()                         #TEST MODE B
+        sign_in = functions.sign_in_db(email.lower().strip(), password)
+        if sign_in == "Logado com sucesso":           #TEST MODE A
+            self.manager.current='Tela de Estoque'    #TEST MODE A
+            self.clear_fields()                       #TEST MODE A
+        # self.manager.current='Tela de Estoque'      #TEST MODE B
+        # self.clear_fields()                         #TEST MODE B
         return functions.open_snackbar(sign_in)
 
 
     def sign_up_button(self, email, password):
-        sign_up = functions.sign_up_db(email.lower(), password)
+        sign_up = functions.sign_up_db(email.lower().strip(), password)
         return functions.open_snackbar(sign_up)
 
 
 class EstoqueScreen(Screen):
     def on_enter(self):
-        Clock.schedule_once(self.add_items, 0.1)
-        Clock.schedule_once(self.update_list_estoque, 0.2)
+        self.count = 0
+        if self.count == 0:
+            Clock.schedule_once(self.add_items, 0.01)
+            self.count += 1
+        if self.count > 0:
+            Clock.schedule_once(self.update_list_estoque, 0.02)
+        try:
+            self.entradas, self.saidas = functions.graphic_generate()
+        except:
+            pass
 
 
     def add_items(self, a=None):
-        lista = self.ids.main_scroll
-        estoque = functions.get_db_estoque()
-        if estoque != 'Estoque Vazio':
-            estoque = estoque.items()
-            for k, v in estoque:
-                item = MDListItem(radius=[10,10,10,10])
-                item.add_widget(MDListItemTrailingIcon(icon='hammer-screwdriver'))
-                item.add_widget(MDListItemHeadlineText(text=k))
-                item.add_widget(MDListItemSupportingText(text=f"Código: {v['codigo']}"))
-                item.add_widget(MDListItemTertiaryText(text=f"Quantidade em Estoque: {v['qtEstoque']}"))
-                lista.add_widget(item)
-        else:
-            functions.open_snackbar('Estoque Vazio')
+        functions.add_items_list_stock(self)
 
 
     def update_list_estoque(self, a=None):
@@ -101,12 +97,28 @@ class EstoqueScreen(Screen):
 
 
 class AnaliseScreen(Screen):
+    def on_pre_enter(self):
+        try:
+            estoque_screen = self.manager.get_screen('Tela de Estoque')
+            entradas = getattr(estoque_screen, "entradas", 0)
+            saidas = getattr(estoque_screen, "saidas", 0)
+            self.ids.entrada.text = f'Entradas: {entradas}'
+            self.ids.saida.text = f'Saidas: {saidas}'
+        except:
+            self.ids.entrada.text = f'Entradas: -----'
+            self.ids.saida.text = f'Saidas: ----'
+
+        self.ids.image.reload()
+
+
     def shortly(self):
         functions.open_snackbar('EM BREVE - 3a V.A')
 
 
 class MovimentacoesScreen(Screen):
-    pass
+    def on_enter(self):
+        self.ids.main_scroll.clear_widgets()
+        functions.add_items_list_moviments(self)
 
 
 class ConfiguracoesScreen(Screen):
@@ -128,17 +140,25 @@ class CadastroProdutoScreen(Screen):
     def on_enter(self):
         try:
             self.estoque = functions.get_db_estoque()
-            print(self.estoque)             #VIEW MODE
-            print(self.estoque.keys())      #VIEW MODE
         except:
             pass
 
 
     def existing_name_check(self, text_field):
         try:
-            if functions.check_name_product((text_field.text).title(), self.estoque) == 'Erro':
+            if functions.check_name_product((text_field.text).title().strip(), self.estoque) == 'Erro':
                 text_field.error = True
                 functions.open_snackbar('O produto já existe')
+                return 'ERRO'
+        except:
+            pass
+
+
+    def existing_code_check(self, code_field):
+        try:
+            if functions.check_name_product(code_field.text, self.estoque) == 'Erro':
+                code_field.error = True
+                functions.open_snackbar('O código já existe')
                 return 'ERRO'
         except:
             pass
@@ -306,7 +326,7 @@ class SaidaProdutoScreen(Screen):
                         new_qt = qt - int(qt_exiting)
                         lista = self.ids.main_scroll_exit
                         item = MDListItem(radius=[10,10,10,10])
-                        item.add_widget(MDListItemTrailingIcon(icon='arrow-up-drop-circle'))
+                        item.add_widget(MDListItemTrailingIcon(icon='arrow-down-drop-circle'))
                         item.add_widget(MDListItemHeadlineText(text=name))
                         item.add_widget(MDListItemSupportingText(text=f"Quantidade antes: {qt}"))
                         item.add_widget(MDListItemTertiaryText(text=f"Quantidade após: {new_qt}"))
@@ -318,7 +338,7 @@ class SaidaProdutoScreen(Screen):
                         self.ids.product_qt_input_exit.text = ''
                 except:
                     functions.open_snackbar('Insira uma quantidade válida')
-        print(self.list_exit)
+
 
     def remove_product_db(self):
         def continuar(motivo):

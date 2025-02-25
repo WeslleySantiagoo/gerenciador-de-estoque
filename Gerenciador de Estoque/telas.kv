@@ -249,42 +249,72 @@ ScreenManager:
                     size_hint_y: 0.2
 
                 FitImage:
+                    id: image
                     source: "Images/ring_graphic.png"
                     size_hint: (None, None)
                     size: '300dp','300dp'
                     pos_hint: {'center_x': 0.5,'center_y': 0.5}
 
-                MDBoxLayout:
+                MDFloatLayout:
                     orientation: 'horizontal'
-                    size_hint_y: 0.3
-                    MDFloatLayout:
-                        MDIcon:
-                            icon: 'arrow-up-drop-circle'
-                            icon_color: '#2F47ED'
-                            pos_hint: {'center_x': 0.8,'center_y': 0.54}
+                    size_hint_y: 0.4
+                    spacing: dp(5)
+                    padding: dp(5)
+                    pos_hint: {"center_x": 0.5}
+                    MDBoxLayout:
+                        padding: (10,0,10,0)
+                        pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                        MDBoxLayout:
+                            pos_hint: {'center_x': 0.333,'center_y': 0.5}
+                            orientation: 'vertical'
+                            spacing: dp(2)
 
+                            MDIcon:
+                                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                                icon: "arrow-up-drop-circle"
+                                icon_color: '#2F47ED'
+                                size_hint: None, None
+                                size: '50dp','50dp'
 
-                    MDLabel:
-                        text: "Entrada"
-                        halign: 'left'
-                        text_color: ('#2C4A44')
-                        theme_font_name: 'Custom'
-                        font_name: 'Fonts/Poppins-Bold.ttf'
-                        size_hint_x: 0.75
+                            MDLabel:
+                                id: entrada
+                                text: "0000"
+                                halign: 'center'
+                                font_size: "10sp"
+                                pos_hint: {'center_y': 0.45}
+                                theme_text_color: "Custom"
+                                text_color: ('#2C4A44')
+                                theme_font_name: 'Custom'
+                                font_name: 'Fonts/Poppins-Bold.ttf'
+                                size_hint_y: 0.6
 
-                    MDFloatLayout:
-                        size_hint_x: 0.8
-                        MDIcon:
-                            icon: 'arrow-down-drop-circle'
-                            icon_color: '#ED3A3A'
-                            pos_hint: {'center_x': 0.8,'center_y': 0.54}
+                        Widget:
+                            size_hint_x: None
+                            width: dp(5)
 
-                    MDLabel:
-                        text: "Saída"
-                        halign: 'left'
-                        text_color: ('#2C4A44')
-                        theme_font_name: 'Custom'
-                        font_name: 'Fonts/Poppins-Bold.ttf'
+                        MDBoxLayout:
+                            orientation: 'vertical'
+                            spacing: dp(5)
+                            pos_hint: {'center_x': 0.66,'center_y': 0.5}
+
+                            MDIcon:
+                                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                                icon: "arrow-down-drop-circle"
+                                icon_color: '#ED3A3A'
+                                size_hint: None, None
+                                size: dp(24), dp(24)
+
+                            MDLabel:
+                                id: saida
+                                text: "0000"
+                                halign: 'center'
+                                font_size: "10sp"
+                                pos_hint: {'center_y': 0.45}
+                                theme_text_color: "Custom"
+                                text_color: ('#2C4A44')
+                                theme_font_name: 'Custom'
+                                font_name: 'Fonts/Poppins-Bold.ttf'
+                                size_hint_y: 0.6
 
                 MDFloatLayout:
                     md_bg_color: (179/255,209/255,200/255,1)
@@ -346,6 +376,11 @@ ScreenManager:
                 orientation: 'horizontal'
                 padding: [10,0,10,0]
                 md_bg_color: (174/255,209/255,200/255,1)
+
+                MDScrollView:
+                    MDList:
+                        id: main_scroll
+                        spacing: '10dp'
 
 
 <ConfiguracoesScreen>
@@ -476,6 +511,7 @@ ScreenManager:
                         text: "Nome"
                         theme_font_name: 'Custom'
                         font_name: 'Fonts/Poppins-Regular.ttf'
+
                 MDTextField:
                     id: product_code_input
                     mode: 'outlined'
@@ -484,7 +520,7 @@ ScreenManager:
                     theme_line_color: "Custom"
                     line_color_normal: (209/255, 209/255, 209/255, 1)
                     padding: [0,10,0,10]
-                    on_text: root.existing_name_check(self)
+                    on_text: root.existing_code_check(self)
 
                     MDTextFieldHintText:
                         text: "Código"
@@ -513,7 +549,6 @@ ScreenManager:
                     theme_line_color: "Custom"
                     line_color_normal: (209/255, 209/255, 209/255, 1)
                     padding: [0,10,0,10]
-                    on_text: root.existing_name_check(self)
 
                     MDTextFieldHintText:
                         text: "Unidade de Medida"
@@ -771,7 +806,7 @@ ScreenManager:
                         on_focus: root.verify_name(self.focus)
 
                         MDTextFieldHintText:
-                            text: "Quantidade de entrada"
+                            text: "Quantidade de saída"
                             theme_font_name: 'Custom'
                             font_name: 'Fonts/Poppins-Regular.ttf'
 
@@ -791,7 +826,7 @@ ScreenManager:
                             theme_font_name: 'Custom'
                             font_name: 'Fonts/Poppins-Bold.ttf'
                             text_color: (1,1,1,1)
-                            text: "Adicionar a lista de entrada"
+                            text: "Adicionar a lista de saída"
                             pos_hint: {"center_x": .5, "center_y": .5}
 
 

@@ -1,5 +1,12 @@
 import pyrebase
 from kivymd.uix.snackbar import MDSnackbar,MDSnackbarText
+from kivymd.uix.list import (
+    MDListItem,
+    MDListItemHeadlineText,
+    MDListItemSupportingText,
+    MDListItemTertiaryText,
+    MDListItemTrailingIcon
+)
 
 config = {
     "apiKey": "SUA_API_KEY",
@@ -24,7 +31,6 @@ def sign_in_db(email, password):
                     user = auth.sign_in_with_email_and_password(email, password)
                     return "Logado com sucesso"
                 except:
-                    print(Exception)
                     return 'Email ou senha incorreto.'
             else:
                 return 'Senha deve conter mais de 6 dígitos'
@@ -66,7 +72,6 @@ def open_snackbar(msg):
 def get_db_estoque():
     lista = dict()
     estoque = db.child('Estoque').get()
-    print(estoque)
     try:
         for i in estoque.val():
             description = {
@@ -86,37 +91,59 @@ def check_name_product(text_field,estoque):
     if text_field.lower().title() in produtos:
         return 'Erro'
 
+def check_code_product(code_field,estoque):
+    produtos = estoque.keys()
+    codigos = []
+    for k, v in estoque.items():
+        codigos.append(v['codigo'])
+
+    if code_field in produtos:
+        return 'Erro'
 
 def graphic_generate():
-    import matplotlib.pyplot as plt
+    entradas = 0
+    saidas = 0
+    log = db.child('Logs').get()
+    log_time = log.val()
+    try:
+        for time in log_time:
+            msg = log_time[time]['mensagem']
+            if 'Entrou' in msg or 'Cadastro' in msg:
+                entradas += int(log_time[time]['quantidade'])
+            elif 'Saiu' in msg:
+                saidas += int(log_time[time]['quantidade'])
 
-    sizes = [50, 50]
-    colors = ['#2F47ED', '#ED3A3A']
-    fig, ax = plt.subplots(figsize=(5, 5), dpi=100)
 
-    wedges, _ = ax.pie(
-        sizes,
-        colors=colors,
-        startangle=90,
-        wedgeprops={'edgecolor': '#AED1C8'}
-    )
+        import matplotlib.pyplot as plt
+        sizes = [entradas, saidas]
+        colors = ['#2F47ED', '#ED3A3A']
+        fig, ax = plt.subplots(figsize=(5, 5), dpi=100)
 
-    center_circle = plt.Circle((0, 0), 0.6, fc='#AED1C8', linewidth=2)
-    ax.add_artist(center_circle)
+        wedges, _ = ax.pie(
+            sizes,
+            colors=colors,
+            startangle=90,
+            wedgeprops={'edgecolor': '#AED1C8'}
+        )
 
-    ax.set_xlim(-1, 1)
-    ax.set_ylim(-1, 1)
-    plt.axis('off')
-    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+        center_circle = plt.Circle((0, 0), 0.6, fc='#AED1C8', linewidth=2)
+        ax.add_artist(center_circle)
 
-    plt.savefig(
-        "Gerenciador de Estoque/Images/ring_graphic.png",
-        dpi=100,
-        bbox_inches='tight',
-        transparent=True,
-        pad_inches=0
-    )
+        ax.set_xlim(-1, 1)
+        ax.set_ylim(-1, 1)
+        plt.axis('off')
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
+        plt.savefig(
+            "Gerenciador de Estoque/Images/ring_graphic.png",
+            dpi=100,
+            bbox_inches='tight',
+            transparent=True,
+            pad_inches=0
+        )
+        return entradas, saidas
+    except:
+        pass
 
 def add_new_product(name, code, qt, unit, report):
     db.child('Estoque').update({
@@ -127,6 +154,58 @@ def add_new_product(name, code, qt, unit, report):
             'Motivo': report
         }
     })
+
+
+def add_items_list_stock(self):
+    lista = self.ids.main_scroll
+    estoque = get_db_estoque()
+    if estoque != 'Estoque Vazio':
+        estoque = estoque.items()
+        for k, v in estoque:
+            item = MDListItem(radius=[10,10,10,10])
+            item.add_widget(MDListItemTrailingIcon(icon='hammer-screwdriver'))
+            item.add_widget(MDListItemHeadlineText(text=k))
+            item.add_widget(MDListItemSupportingText(text=f"Código: {v['codigo']}"))
+            item.add_widget(MDListItemTertiaryText(text=f"Quantidade em Estoque: {v['qtEstoque']}"))
+            lista.add_widget(item)
+    else:
+        open_snackbar('Estoque Vazio')
+
+
+def add_items_list_moviments(self):
+    lista = self.ids.main_scroll
+    log = db.child('Logs').get()
+    try:
+        for time in reversed(log.val()):
+            item = MDListItem(radius=[10,10,10,10])
+            if "Entrou" in log.val()[time]['mensagem']:
+                item.add_widget(MDListItemTrailingIcon(
+                    icon='arrow-up-drop-circle',
+                    icon_color= '#2F47ED'
+                ))
+            elif "Saiu" in log.val()[time]['mensagem']:
+                item.add_widget(MDListItemTrailingIcon(
+                    icon='arrow-down-drop-circle',
+                    icon_color= '#2F47ED'
+                ))
+            elif "excluido" in log.val()[time]['mensagem']:
+                item.add_widget(MDListItemTrailingIcon(
+                    icon='trash-can-outline',
+                    icon_color= '#2F47ED'
+                ))
+            elif "Cadastro" in log.val()[time]['mensagem']:
+                item.add_widget(MDListItemTrailingIcon(
+                    icon='database-arrow-up',
+                    icon_color= '#2F47ED'
+                ))
+
+
+            item.add_widget(MDListItemHeadlineText(text=str(time)))
+            item.add_widget(MDListItemSupportingText(text=str(log.val()[time]['mensagem'])))
+            item.add_widget(MDListItemTertiaryText(text=str(log.val()[time]['motivo'])))
+            lista.add_widget(item)
+    except Exception as e:
+        open_snackbar('ERRO!')
 
 
 def enter_product(dict_p, report):
@@ -141,7 +220,7 @@ def remove_product(dict_p, report):
     for k, v in dict_p.items():
         sleep(0.1)
         add_log(k,v[0]-v[1],'saida', report)
-        sleep(0.1)
+        sleep(0.5)
         if v[1] == 0:
             add_log(k,None,'exclusao',report)
             db.child('Estoque').child(k).remove()
@@ -151,12 +230,19 @@ def remove_product(dict_p, report):
 
 
 def save_and_continue(self, name, code, qt, unit, report):
+    text_input = self.ids.product_name_input
+    code_input = self.ids.product_code_input
+    name = name.strip().lower().title()
+    code = code.strip()
+    qt = qt.strip()
+    unit = unit.strip()
+    report = report.strip().capitalize()
     if name != '':
         if code != '':
             if qt != '':
                 if unit != '':
                     if report != '':
-                        if self.ids.product_name_input.error != True:
+                        if text_input.error != True and code_input.error != True:
                             try:
                                 qt = int(qt)
                                 add_new_product(name, code, qt, unit, report)
@@ -170,7 +256,7 @@ def save_and_continue(self, name, code, qt, unit, report):
                             except:
                                 open_snackbar('Insira uma quantidade válida')
                         else:
-                            open_snackbar('O produto já existe')
+                            open_snackbar('O produto ou código já existe')
                     else:
                         open_snackbar('Insira o motivo')
                 else:
@@ -184,18 +270,23 @@ def save_and_continue(self, name, code, qt, unit, report):
 
 
 def save_and_exit(self, name, code, qt, unit, report,):
+    text_input = self.ids.product_name_input
+    code_input = self.ids.product_code_input
+    name = name.strip().lower().title()
+    code = code.strip()
+    qt = qt.strip()
+    unit = unit.strip()
+    report = report.strip().capitalize()
     if name != '':
         if code != '':
             if qt != '':
                 if unit != '':
                     if report != '':
-                        if self.ids.product_name_input.error != True:
+                        if text_input.error != True and code_input.error != True:
                             try:
                                 qt = int(qt)
                                 add_new_product(name, code, qt, unit, report)
-                                print('a')
                                 add_log(name,qt,'cadastro',report)
-                                print('b')
                                 open_snackbar('Produto adicionado com sucesso')
                                 self.ids.product_name_input.text = ''
                                 self.ids.product_code_input.text = ''
@@ -206,7 +297,7 @@ def save_and_exit(self, name, code, qt, unit, report,):
                             except:
                                 open_snackbar('Insira uma quantidade válida')
                         else:
-                            open_snackbar('O produto já existe')
+                            open_snackbar('O produto ou código já existe')
                     else:
                         open_snackbar('Insira o motivo')
                 else:
@@ -222,21 +313,25 @@ def save_and_exit(self, name, code, qt, unit, report,):
 def add_log(name, qt, operation, report):
     from datetime import datetime
     data_hora = datetime.now().strftime("%d-%m-%Y - %H:%M:%S")
-    estoque = get_db_estoque()
-    unit = estoque[name]['unit']
-    code = estoque[name]['codigo']
+    estoque_ = get_db_estoque()
+    unit = estoque_[name]['unit']
+    code = estoque_[name]['codigo']
     
     match operation:
         case 'entrada':
-            msg = f'Acaba de entrar {qt}{unit} de {name} do estoque.'
+            msg = f'Entrou {qt}{unit} de {name}.'
         case 'saida':
-            msg = f'Acaba de sair {qt}{unit} de {name} do estoque.'
+            msg = f'Saiu {qt}{unit} de {name}.'
         case 'cadastro':
-            msg = f'Cadastro: {name}, Código: {code}, Quantidade: {qt}.'
+            msg = f'Cadastro: {name} - Código: {code} - Quantidade: {qt}.'
         case 'exclusao':
             msg = f'O produto {name} foi excluido por não ter mais material no estoque'
 
-    db.child('Logs').child(data_hora).set({'mensagem': msg, 'motivo': report})
+    db.child('Logs').child(data_hora).set({
+        'mensagem': msg,
+        'motivo': report,
+        'quantidade': qt
+    })
 
 
 dialog = None
@@ -244,9 +339,9 @@ report = None
 callback_function = None
 def open_dialog(callback, enter_exit):
     if enter_exit == 'enter':
-        icon = 'database-arrow-down'
-    else:
         icon = 'database-arrow-up'
+    else:
+        icon = 'database-arrow-down'
     from kivymd.uix.button import MDButton,MDButtonText
     from kivymd.uix.widget import Widget
     from kivymd.uix.dialog import (
@@ -311,5 +406,3 @@ def confirm(instance):
     close_dialog()
     if callback_function:
         callback_function(motivo)
-
-
