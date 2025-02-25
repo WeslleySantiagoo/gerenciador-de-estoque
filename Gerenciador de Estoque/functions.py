@@ -15,7 +15,7 @@ config = {
     "storageBucket": "SEU_PROJETO.appspot.com",
     'messagingSenderId': "SEU_SENDER_ID",
     'appId': "SUA_APP_ID",
-    'easurementId': "SEU_EASUREMENT_ID"
+    'measurementId': "SEU_EASUREMENT_ID"
 }
 
 global fb, auth, user, db
@@ -210,6 +210,8 @@ def add_items_list_moviments(self):
 
 def enter_product(dict_p, report):
     for k, v in dict_p.items():
+        from time import sleep
+        sleep(0.2)
         db.child('Estoque').child(k).update({'qtEstoque': str(v[1])})
         add_log(k,v[1]-v[0],'entrada',report)
     open_snackbar('Entrada dos itens concluida')
@@ -237,36 +239,31 @@ def save_and_continue(self, name, code, qt, unit, report):
     qt = qt.strip()
     unit = unit.strip()
     report = report.strip().capitalize()
-    if name != '':
-        if code != '':
-            if qt != '':
-                if unit != '':
-                    if report != '':
-                        if text_input.error != True and code_input.error != True:
-                            try:
-                                qt = int(qt)
-                                add_new_product(name, code, qt, unit, report)
-                                add_log(name,qt,'cadastro',report)
-                                open_snackbar('Produto adicionado com sucesso')
-                                self.ids.product_name_input.text = ''
-                                self.ids.product_code_input.text = ''
-                                self.ids.product_qt_input.text = ''
-                                self.ids.product_unit_input.text = ''
-                                self.ids.product_report_input.text = ''
-                            except:
-                                open_snackbar('Insira uma quantidade válida')
-                        else:
-                            open_snackbar('O produto ou código já existe')
-                    else:
-                        open_snackbar('Insira o motivo')
-                else:
-                    open_snackbar('Insira a unidade')
-            else:
-                open_snackbar('Insira a quantidade')
-        else:
-            open_snackbar('Insira o código')
-    else:
+    if name == '':
         open_snackbar('Insira o nome')
+    elif code == '':
+         open_snackbar('Insira o código')
+    elif qt == '':
+         open_snackbar('Insira a quantidade')
+    elif unit == '':
+         open_snackbar('Insira a unidade')
+    elif report == '':
+         open_snackbar('Insira o motivo')
+    elif text_input.error != True:
+        try:
+            qt = int(qt)
+            add_new_product(name, code, qt, unit, report)
+            add_log(name,qt,'cadastro',report)
+            open_snackbar('Produto adicionado com sucesso')
+            self.ids.product_name_input.text = ''
+            self.ids.product_code_input.text = ''
+            self.ids.product_qt_input.text = ''
+            self.ids.product_unit_input.text = ''
+            self.ids.product_report_input.text = ''
+        except:
+            open_snackbar('Insira uma quantidade válida')
+    else:
+        open_snackbar('O produto já existe')
 
 
 def save_and_exit(self, name, code, qt, unit, report,):
@@ -277,37 +274,32 @@ def save_and_exit(self, name, code, qt, unit, report,):
     qt = qt.strip()
     unit = unit.strip()
     report = report.strip().capitalize()
-    if name != '':
-        if code != '':
-            if qt != '':
-                if unit != '':
-                    if report != '':
-                        if text_input.error != True and code_input.error != True:
-                            try:
-                                qt = int(qt)
-                                add_new_product(name, code, qt, unit, report)
-                                add_log(name,qt,'cadastro',report)
-                                open_snackbar('Produto adicionado com sucesso')
-                                self.ids.product_name_input.text = ''
-                                self.ids.product_code_input.text = ''
-                                self.ids.product_qt_input.text = ''
-                                self.ids.product_unit_input.text = ''
-                                self.ids.product_report_input.text = ''
-                                self.manager.current = 'Tela de Estoque'
-                            except:
-                                open_snackbar('Insira uma quantidade válida')
-                        else:
-                            open_snackbar('O produto ou código já existe')
-                    else:
-                        open_snackbar('Insira o motivo')
-                else:
-                    open_snackbar('Insira a unidade')
-            else:
-                open_snackbar('Insira a quantidade')
-        else:
-            open_snackbar('Insira o código')
-    else:
+    if name == '':
         open_snackbar('Insira o nome')
+    elif code == '':
+         open_snackbar('Insira o código')
+    elif qt == '':
+         open_snackbar('Insira a quantidade')
+    elif unit == '':
+         open_snackbar('Insira a unidade')
+    elif report == '':
+         open_snackbar('Insira o motivo')
+    elif text_input.error != True:
+        try:
+            qt = int(qt)
+            add_new_product(name, code, qt, unit, report)
+            add_log(name,qt,'cadastro',report)
+            open_snackbar('Produto adicionado com sucesso')
+            self.ids.product_name_input.text = ''
+            self.ids.product_code_input.text = ''
+            self.ids.product_qt_input.text = ''
+            self.ids.product_unit_input.text = ''
+            self.ids.product_report_input.text = ''
+            self.manager.current = 'Tela de Estoque'
+        except:
+            open_snackbar('Insira uma quantidade válida')
+    else:
+        open_snackbar('O produto já existe')
 
 
 def add_log(name, qt, operation, report):

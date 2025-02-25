@@ -25,7 +25,7 @@ config = {
     "storageBucket": "SEU_PROJETO.appspot.com",
     'messagingSenderId': "SEU_SENDER_ID",
     'appId': "SUA_APP_ID",
-    'easurementId': "SEU_EASUREMENT_ID"
+    'measurementId': "SEU_EASUREMENT_ID"
 }
 
 
@@ -156,7 +156,7 @@ class CadastroProdutoScreen(Screen):
 
     def existing_code_check(self, code_field):
         try:
-            if functions.check_name_product(code_field.text, self.estoque) == 'Erro':
+            if functions.check_code_product(code_field.text, self.estoque) == 'Erro':
                 code_field.error = True
                 functions.open_snackbar('O código já existe')
                 return 'ERRO'
